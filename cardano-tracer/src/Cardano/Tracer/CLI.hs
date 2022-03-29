@@ -6,17 +6,24 @@ module Cardano.Tracer.CLI
 import           Options.Applicative
 
 -- | CLI parameters required for the tracer.
-newtype TracerParams = TracerParams
-  { tracerConfig :: FilePath
+data TracerParams = TracerParams
+  { tracerConfig :: !FilePath
+  , checkMode    :: !Bool
   }
 
 -- | Parse CLI parameters for the tracer.
 parseTracerParams :: Parser TracerParams
-parseTracerParams = TracerParams <$>
-  strOption
-    (    long "config"
-      <> short 'c'
-      <> metavar "FILEPATH"
-      <> help "Configuration file for cardano-tracer"
-      <> completer (bashCompleter "file")
-    )
+parseTracerParams = TracerParams
+  <$> strOption
+        (    long "config"
+          <> short 'c'
+          <> metavar "FILEPATH"
+          <> help "Configuration file for cardano-tracer"
+          <> completer (bashCompleter "file")
+        )
+  <*> flag
+        False
+        True
+        (    long "check-mode"
+          <> help "Run in check mode: shows all accepted stuff"
+        )

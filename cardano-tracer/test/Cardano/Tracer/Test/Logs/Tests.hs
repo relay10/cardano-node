@@ -36,7 +36,7 @@ propLogs :: LogFormat -> FilePath -> FilePath -> IO Property
 propLogs format rootDir localSock = do
   stopProtocols <- initProtocolsBrake
   dpRequestors <- initDataPointRequestors
-  withAsync (doRunCardanoTracer (config rootDir localSock) stopProtocols dpRequestors) . const $ do
+  withAsync (doRunCardanoTracer (config rootDir localSock) False stopProtocols dpRequestors) . const $ do
     sleep 1.0
     withAsync (launchForwardersSimple Initiator localSock 1000 10000) . const $ do
       sleep 8.0 -- Wait till some rotation is done.
@@ -67,6 +67,7 @@ propLogs format rootDir localSock = do
     , ekgRequestFreq = Just 1.0
     , hasEKG         = Nothing
     , hasPrometheus  = Nothing
+    , hasRTView      = Nothing
     , logging        = NE.fromList [LoggingParams root FileMode format]
     , rotation       = Just $ RotationParams
                          { rpFrequencySecs = 3
@@ -81,7 +82,7 @@ propMultiInit :: LogFormat -> FilePath -> FilePath -> FilePath -> IO Property
 propMultiInit format rootDir localSock1 localSock2 = do
   stopProtocols <- initProtocolsBrake
   dpRequestors <- initDataPointRequestors
-  withAsync (doRunCardanoTracer (config rootDir localSock1 localSock2) stopProtocols dpRequestors) . const $ do
+  withAsync (doRunCardanoTracer (config rootDir localSock1 localSock2) False stopProtocols dpRequestors) . const $ do
     sleep 1.0
     withAsync (launchForwardersSimple Responder localSock1 1000 10000) . const $ do
       sleep 1.0
@@ -98,6 +99,7 @@ propMultiInit format rootDir localSock1 localSock2 = do
     , ekgRequestFreq = Just 1.0
     , hasEKG         = Nothing
     , hasPrometheus  = Nothing
+    , hasRTView      = Nothing
     , logging        = NE.fromList [LoggingParams root FileMode format]
     , rotation       = Nothing
     , verbosity      = Just Minimum
@@ -107,7 +109,7 @@ propMultiResp :: LogFormat -> FilePath -> FilePath -> IO Property
 propMultiResp format rootDir localSock = do
   stopProtocols <- initProtocolsBrake
   dpRequestors <- initDataPointRequestors
-  withAsync (doRunCardanoTracer (config rootDir localSock) stopProtocols dpRequestors) . const $ do
+  withAsync (doRunCardanoTracer (config rootDir localSock) False stopProtocols dpRequestors) . const $ do
     sleep 1.0
     withAsync (launchForwardersSimple Initiator localSock 1000 10000) . const $ do
       sleep 1.0
@@ -124,6 +126,7 @@ propMultiResp format rootDir localSock = do
     , ekgRequestFreq = Just 1.0
     , hasEKG         = Nothing
     , hasPrometheus  = Nothing
+    , hasRTView      = Nothing
     , logging        = NE.fromList [LoggingParams root FileMode format]
     , rotation       = Nothing
     , verbosity      = Just Minimum

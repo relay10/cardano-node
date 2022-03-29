@@ -1,0 +1,288 @@
+{-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
+module Cardano.Tracer.Handlers.RTView.Update.Nodes
+  ( addColumnsForConnected
+  , addDatasetsForConnected
+  , checkNoNodesState
+  , updateNodesUI
+  , updateNodesUptime
+  ) where
+
+import           Control.Concurrent.STM (atomically)
+import           Control.Concurrent.STM.TVar
+import           Control.Monad (forM_, unless, when)
+import           Control.Monad.Extra (whenJust)
+import           Data.List.NonEmpty (NonEmpty)
+import qualified Data.Map.Strict as M
+import           Data.Maybe (catMaybes)
+import           Data.Set (Set, (\\))
+import qualified Data.Set as S
+import qualified Data.Text as T
+import           Data.Time.Calendar
+import           Data.Time.Clock (UTCTime (..), addUTCTime, diffUTCTime)
+import           Data.Time.Clock.System
+import           Data.Time.Format (defaultTimeLocale, formatTime)
+import qualified Graphics.UI.Threepenny as UI
+import           Graphics.UI.Threepenny.Core
+import           Text.Read (readMaybe)
+
+import           Cardano.Tracer.Configuration
+import           Cardano.Tracer.Handlers.Metrics.Utils
+import           Cardano.Tracer.Handlers.RTView.Chain
+import           Cardano.Tracer.Handlers.RTView.State.Common
+import           Cardano.Tracer.Handlers.RTView.State.Displayed
+import           Cardano.Tracer.Handlers.RTView.State.TraceObjects
+import           Cardano.Tracer.Handlers.RTView.UI.HTML.Node.Column
+import           Cardano.Tracer.Handlers.RTView.UI.Charts
+import           Cardano.Tracer.Handlers.RTView.UI.Types
+import           Cardano.Tracer.Handlers.RTView.UI.Utils
+import           Cardano.Tracer.Handlers.RTView.Update.NodeInfo
+import           Cardano.Tracer.Handlers.RTView.Update.Utils
+import           Cardano.Tracer.Types
+
+updateNodesUI
+  :: UI.Window
+  -> ConnectedNodes
+  -> DisplayedElements
+  -> AcceptedMetrics
+  -> SavedTraceObjects
+  -> NodesEraSettings
+  -> DataPointRequestors
+  -> NonEmpty LoggingParams
+  -> Colors
+  -> DatasetsIndices
+  -> UI ()
+updateNodesUI window connectedNodes displayedElements acceptedMetrics
+              savedTO nodesEraSettings dpRequestors loggingConfig colors datasetIndices = do
+  (connected, displayedEls) <- liftIO . atomically $ (,)
+    <$> readTVar connectedNodes
+    <*> readTVar displayedElements
+  -- Check connected/disconnected nodes since previous UI's update.
+  let displayed = S.fromList $ M.keys displayedEls
+  when (connected /= displayed) $ do
+    let disconnected   = displayed \\ connected -- In 'displayed' but not in 'connected'.
+        newlyConnected = connected \\ displayed -- In 'connected' but not in 'displayed'.
+    deleteColumnsForDisconnected window connected disconnected
+    addColumnsForConnected window newlyConnected loggingConfig
+    checkNoNodesState window connected
+    askNSetNodeInfo window dpRequestors newlyConnected displayedElements
+    addDatasetsForConnected window newlyConnected colors datasetIndices displayedElements
+    liftIO $ updateDisplayedElements displayedElements connected
+  setBlockReplayProgress connected displayedElements acceptedMetrics
+  setChunkValidationProgress connected savedTO
+  setLedgerDBProgress connected savedTO
+  setLeadershipStats connected displayedElements acceptedMetrics
+  setEraEpochInfo connected displayedElements acceptedMetrics nodesEraSettings
+
+addColumnsForConnected
+  :: UI.Window
+  -> Set NodeId
+  -> NonEmpty LoggingParams
+  -> UI ()
+addColumnsForConnected window newlyConnected loggingConfig = do
+  unless (S.null newlyConnected) $
+    findAndShow window "main-table-container"
+  forM_ newlyConnected $ addNodeColumn window loggingConfig
+
+addDatasetsForConnected
+  :: UI.Window
+  -> Set NodeId
+  -> Colors
+  -> DatasetsIndices
+  -> DisplayedElements
+  -> UI ()
+addDatasetsForConnected window newlyConnected colors datasetIndices displayedElements = do
+  unless (S.null newlyConnected) $
+    findAndShow window "main-charts-container"
+  forM_ newlyConnected $ \nodeId ->
+    addNodeDatasetsToCharts window nodeId colors datasetIndices displayedElements
+
+deleteColumnsForDisconnected
+  :: UI.Window
+  -> Set NodeId
+  -> Set NodeId
+  -> UI ()
+deleteColumnsForDisconnected window connected disconnected = do
+  forM_ disconnected $ deleteNodeColumn window
+  when (S.null connected) $ do
+    findAndHide window "main-table-container"
+    findAndHide window "main-charts-container"
+  -- Please note that we don't remove historical data from charts
+  -- for disconnected node. Because the user may want to see the
+  -- historical data even for the node that already disconnected.
+
+checkNoNodesState :: UI.Window -> Set NodeId -> UI ()
+checkNoNodesState window connected =
+  if S.null connected
+    then do
+      findAndShow window "no-nodes"
+      findAndShow window "no-nodes-info"
+    else do
+      findAndHide window "no-nodes"
+      findAndHide window "no-nodes-info"
+
+updateNodesUptime
+  :: ConnectedNodes
+  -> DisplayedElements
+  -> UI ()
+updateNodesUptime connectedNodes displayedElements = do
+  connected <- liftIO $ readTVarIO connectedNodes
+  now <- systemToUTCTime <$> liftIO getSystemTime
+  displayed <- liftIO $ readTVarIO displayedElements
+  let elsIdsWithUptimes = map (getUptimeForNode now displayed) $ S.toList connected
+  setTextValues $ catMaybes elsIdsWithUptimes
+ where
+  getUptimeForNode now displayed nodeId@(NodeId anId) =
+    let nodeStartElId  = anId <> "__node-start-time"
+        nodeUptimeElId = anId <> "__node-uptime"
+    in case getDisplayedValuePure displayed nodeId nodeStartElId of
+         Nothing -> Nothing
+         Just tsRaw ->
+           case readMaybe (T.unpack tsRaw) of
+             Nothing -> Nothing
+             Just (startTime :: UTCTime) ->
+               let uptimeDiff = now `diffUTCTime` startTime
+                   uptime = uptimeDiff `addUTCTime` nullTime
+                   uptimeFormatted = formatTime defaultTimeLocale "%X" uptime
+                   daysNum = utctDay uptime `diffDays` utctDay nullTime
+                   uptimeWithDays = if daysNum > 0
+                                      -- Show days only if 'uptime' > 23:59:59.
+                                      then show daysNum <> "d " <> uptimeFormatted
+                                      else uptimeFormatted
+               in Just (nodeUptimeElId, T.pack uptimeWithDays)
+
+  nullTime = UTCTime (ModifiedJulianDay 0) 0
+
+setBlockReplayProgress
+  :: Set NodeId
+  -> DisplayedElements
+  -> AcceptedMetrics
+  -> UI ()
+setBlockReplayProgress connected _displayedElements acceptedMetrics = do
+  allMetrics <- liftIO $ readTVarIO acceptedMetrics
+  forM_ connected $ \nodeId ->
+    whenJust (M.lookup nodeId allMetrics) $ \(ekgStore, _) -> do
+      metrics <- liftIO $ getListOfMetrics ekgStore
+      whenJust (lookup "Block replay progress (%)" metrics) $ \metricValue ->
+        updateBlockReplayProgress nodeId $ T.unpack metricValue
+ where
+  updateBlockReplayProgress (NodeId anId) valueS =
+    whenJust (readMaybe valueS) $ \(progressPct :: Double) -> do
+      let nodeBlockReplayElId = anId <> "__node-block-replay"
+          progressPctS = T.pack $ show progressPct
+      if ("100" `T.isInfixOf` progressPctS)
+        then setTextAndClasses nodeBlockReplayElId "100&nbsp;%" "rt-view-percent-done"
+        else setTextValue nodeBlockReplayElId $ progressPctS <> "&nbsp;%"
+
+setChunkValidationProgress
+  :: Set NodeId
+  -> SavedTraceObjects
+  -> UI ()
+setChunkValidationProgress connected savedTO = do
+  savedTraceObjects <- liftIO $ readTVarIO savedTO
+  forM_ connected $ \nodeId@(NodeId anId) ->
+    whenJust (M.lookup nodeId savedTraceObjects) $ \savedTOForNode -> do
+      let nodeChunkValidationElId = anId <> "__node-chunk-validation"
+      forM_ (M.toList savedTOForNode) $ \(namespace, trObValue) ->
+        case namespace of
+          "Cardano.Node.ChainDB.ImmDbEvent.ChunkValidation.ValidatedChunk" ->
+            -- In this case we don't need to check if the value differs from displayed one,
+            -- because this 'TraceObject' is forwarded only with new values, and after 100%
+            -- the node doesn't forward it anymore.
+            --
+            -- Example: "Validated chunk no. 2262 out of 2423. Progress: 93.36%"
+            case T.words trObValue of
+              [_, _, _, current, _, _, from, _, progressPct] ->
+                setTextValue nodeChunkValidationElId $
+                             T.init progressPct <> "&nbsp;%: no. " <> current <> " from " <> T.init from
+              _ -> return ()
+          "Cardano.Node.ChainDB.ImmDbEvent.ValidatedLastLocation" ->
+            setTextAndClasses nodeChunkValidationElId "100&nbsp;%" "rt-view-percent-done"
+          _ -> return ()
+
+setLedgerDBProgress
+  :: Set NodeId
+  -> SavedTraceObjects
+  -> UI ()
+setLedgerDBProgress connected savedTO = do
+  savedTraceObjects <- liftIO $ readTVarIO savedTO
+  forM_ connected $ \nodeId@(NodeId anId) ->
+    whenJust (M.lookup nodeId savedTraceObjects) $ \savedTOForNode -> do
+      let nodeLedgerDBUpdateElId = anId <> "__node-update-ledger-db"
+      forM_ (M.toList savedTOForNode) $ \(namespace, trObValue) ->
+        case namespace of
+          "Cardano.Node.ChainDB.InitChainSelEvent.UpdateLedgerDb" ->
+            -- In this case we don't need to check if the value differs from displayed one,
+            -- because this 'TraceObject' is forwarded only with new values, and after 100%
+            -- the node doesn't forward it anymore.
+            --
+            -- Example: "Pushing ledger state for block b1e6...fc5a at slot 54495204. Progress: 3.66%"
+            case T.words trObValue of
+              [_, _, _, _, _, _, _, _, _, _, progressPct] -> do
+                if ("100" `T.isInfixOf` progressPct)
+                  then setTextAndClasses nodeLedgerDBUpdateElId "100&nbsp;%" "rt-view-percent-done"
+                  else setTextValue nodeLedgerDBUpdateElId $ T.init progressPct <> "&nbsp;%"
+              _ -> return ()
+          _ -> return ()
+
+setLeadershipStats
+  :: Set NodeId
+  -> DisplayedElements
+  -> AcceptedMetrics
+  -> UI ()
+setLeadershipStats connected displayed acceptedMetrics = do
+  allMetrics <- liftIO $ readTVarIO acceptedMetrics
+  forM_ connected $ \nodeId@(NodeId anId) ->
+    whenJust (M.lookup nodeId allMetrics) $ \(ekgStore, _) -> do
+      metrics <- liftIO $ getListOfMetrics ekgStore
+      forM_ metrics $ \(mName, mValue) ->
+        case mName of
+          -- How many times this node was a leader.
+          "nodeIsLeaderNum"    -> setDisplayedValue nodeId displayed (anId <> "__node-leadership") mValue
+          -- How many blocks were forged by this node.
+          "blocksForgedNum"    -> setDisplayedValue nodeId displayed (anId <> "__node-forged-blocks") mValue
+          -- How many times this node could not forge.
+          "nodeCannotForgeNum" -> setDisplayedValue nodeId displayed (anId <> "__node-cannot-forge") mValue
+          -- How many slots were missed in this node.
+          "slotsMissed"        -> setDisplayedValue nodeId displayed (anId <> "__node-missed-slots") mValue
+          _ -> return ()
+
+setEraEpochInfo
+  :: Set NodeId
+  -> DisplayedElements
+  -> AcceptedMetrics
+  -> NodesEraSettings
+  -> UI ()
+setEraEpochInfo connected displayed acceptedMetrics nodesEraSettings = do
+  allSettings <- liftIO $ readTVarIO nodesEraSettings
+  allMetrics <- liftIO $ readTVarIO acceptedMetrics
+  forM_ connected $ \nodeId@(NodeId anId) ->
+    whenJust (M.lookup nodeId allSettings) $ \settings -> do
+      setDisplayedValue nodeId displayed (anId <> "__node-era") $ nesEra settings
+      whenJust (M.lookup nodeId allMetrics) $ \(ekgStore, _) -> do
+        metrics <- liftIO $ getListOfMetrics ekgStore
+        whenJust (lookup "cardano.node.epoch" metrics) $ \mValue ->
+          updateEpochInfo settings nodeId mValue
+ where
+  updateEpochInfo nodeEraSettings nodeId@(NodeId anId) mValue = do
+    setDisplayedValue nodeId displayed (anId <> "__node-epoch-num") mValue
+    whenJust (readMaybe $ T.unpack mValue) $ \(epochNum :: Int) ->
+      whenJust (getEndOfCurrentEpoch nodeEraSettings epochNum) $ \end ->
+        setTextValue (anId <> "__node-epoch-end") $ formatT end
+
+  formatT = T.pack . formatTime defaultTimeLocale "%D %T"
+
+  getEndOfCurrentEpoch NodeEraSettings{nesEra, nesSlotLengthInS, nesEpochLength} currentEpoch =
+    case lookup nesEra epochsInfo of
+      Nothing -> Nothing
+      Just (epochStartDate, firstEpochInEra) ->
+        let elapsedEpochsInEra = currentEpoch - firstEpochInEra
+            epochLengthInS = nesSlotLengthInS * nesEpochLength
+            secondsFromEpochStartToEpoch = epochLengthInS * elapsedEpochsInEra
+            dateOfEpochStart = epochStartDate + fromIntegral secondsFromEpochStartToEpoch
+            !dateOfEpochEnd = dateOfEpochStart + fromIntegral epochLengthInS
+        in Just $ s2utc dateOfEpochEnd
