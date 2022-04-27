@@ -190,6 +190,12 @@ txSubmissionClient tr bmtr initialTxSource endOfProtocolCallback =
   txToIdSize :: tx -> (GenTxId CardanoBlock, TxSizeInBytes)
   txToIdSize = (Mempool.txId &&& txInBlockSize) . toGenTx
 
+{-
+  TODO: Reuse existing function
+  toGenTx     == Cardano.Mode.InMode.toConsensusGenTx
+  (Problem: it is not exported)"
+-}
+
   toGenTx :: tx -> GenTx CardanoBlock
   toGenTx tx = case (shelleyBasedEra @ era , tx) of
     (ShelleyBasedEraShelley, ShelleyTx _ tx') -> GenTxShelley (mkShelleyTx tx')
