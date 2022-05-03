@@ -49,7 +49,7 @@
 </span><span id="line-49"></span><span>     </span><span id="OperationalCertificate"><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-var">OperationalCertificate</span></a></span></span><span>
 </span><span id="line-50"></span><span>       </span><span class="hs-glyph">!</span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Shelley.OCert</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">StandardCrypto</span></span><span class="hs-special">)</span><span>
 </span><span id="line-51"></span><span>       </span><span class="hs-glyph">!</span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.Key.html#VerificationKey"><span class="hs-identifier hs-type">VerificationKey</span></a></span><span> </span><span class="annot"><a href="Cardano.Api.KeysShelley.html#StakePoolKey"><span class="hs-identifier hs-type">StakePoolKey</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-52"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679490582"><span id="local-6989586621679490584"><span class="annot"><span class="annottext">OperationalCertificate -&gt; OperationalCertificate -&gt; Bool
+</span><span id="line-52"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679492308"><span id="local-6989586621679492310"><span class="annot"><span class="annottext">OperationalCertificate -&gt; OperationalCertificate -&gt; Bool
 (OperationalCertificate -&gt; OperationalCertificate -&gt; Bool)
 -&gt; (OperationalCertificate -&gt; OperationalCertificate -&gt; Bool)
 -&gt; Eq OperationalCertificate
@@ -58,7 +58,7 @@ forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
 $c/= :: OperationalCertificate -&gt; OperationalCertificate -&gt; Bool
 == :: OperationalCertificate -&gt; OperationalCertificate -&gt; Bool
 $c== :: OperationalCertificate -&gt; OperationalCertificate -&gt; Bool
-</span><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/ghc-prim-0.6.1/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679490575"><span id="local-6989586621679490577"><span id="local-6989586621679490579"><span class="annot"><span class="annottext">Int -&gt; OperationalCertificate -&gt; ShowS
+</span><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/ghc-prim-0.6.1/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679492301"><span id="local-6989586621679492303"><span id="local-6989586621679492305"><span class="annot"><span class="annottext">Int -&gt; OperationalCertificate -&gt; ShowS
 [OperationalCertificate] -&gt; ShowS
 OperationalCertificate -&gt; String
 (Int -&gt; OperationalCertificate -&gt; ShowS)
@@ -74,7 +74,7 @@ $cshow :: OperationalCertificate -&gt; String
 showsPrec :: Int -&gt; OperationalCertificate -&gt; ShowS
 $cshowsPrec :: Int -&gt; OperationalCertificate -&gt; ShowS
 </span><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/base-4.14.3.0/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></a></span></span></span></span><span class="hs-special">)</span><span>
-</span><span id="line-53"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">anyclass</span></span><span> </span><span id="local-6989586621679490569"><span id="local-6989586621679490571"><span class="annot"><span class="annottext">HasTypeProxy OperationalCertificate
+</span><span id="line-53"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">anyclass</span></span><span> </span><span id="local-6989586621679492295"><span id="local-6989586621679492297"><span class="annot"><span class="annottext">HasTypeProxy OperationalCertificate
 HasTypeProxy OperationalCertificate
 -&gt; (OperationalCertificate -&gt; ByteString)
 -&gt; (AsType OperationalCertificate
@@ -104,7 +104,7 @@ $cp1SerialiseAsCBOR :: HasTypeProxy OperationalCertificate
 </span><span id="line-58"></span><span>       </span><span class="hs-special">,</span><span> </span><span id="opCertIssueColdKey"><span class="annot"><span class="annottext">OperationalCertificateIssueCounter -&gt; VerificationKey StakePoolKey
 </span><a href="Cardano.Api.OperationalCertificate.html#opCertIssueColdKey"><span class="hs-identifier hs-var hs-var">opCertIssueColdKey</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-glyph">!</span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.Key.html#VerificationKey"><span class="hs-identifier hs-type">VerificationKey</span></a></span><span> </span><span class="annot"><a href="Cardano.Api.KeysShelley.html#StakePoolKey"><span class="hs-identifier hs-type">StakePoolKey</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-comment">-- For consistency checking</span><span>
 </span><span id="line-59"></span><span>       </span><span class="hs-special">}</span><span>
-</span><span id="line-60"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679490561"><span id="local-6989586621679490563"><span class="annot"><span class="annottext">OperationalCertificateIssueCounter
+</span><span id="line-60"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679492287"><span id="local-6989586621679492289"><span class="annot"><span class="annottext">OperationalCertificateIssueCounter
 -&gt; OperationalCertificateIssueCounter -&gt; Bool
 (OperationalCertificateIssueCounter
  -&gt; OperationalCertificateIssueCounter -&gt; Bool)
@@ -120,7 +120,7 @@ $c/= :: OperationalCertificateIssueCounter
 -&gt; OperationalCertificateIssueCounter -&gt; Bool
 $c== :: OperationalCertificateIssueCounter
 -&gt; OperationalCertificateIssueCounter -&gt; Bool
-</span><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/ghc-prim-0.6.1/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679490555"><span id="local-6989586621679490557"><span id="local-6989586621679490559"><span class="annot"><span class="annottext">Int -&gt; OperationalCertificateIssueCounter -&gt; ShowS
+</span><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/ghc-prim-0.6.1/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></a></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679492281"><span id="local-6989586621679492283"><span id="local-6989586621679492285"><span class="annot"><span class="annottext">Int -&gt; OperationalCertificateIssueCounter -&gt; ShowS
 [OperationalCertificateIssueCounter] -&gt; ShowS
 OperationalCertificateIssueCounter -&gt; String
 (Int -&gt; OperationalCertificateIssueCounter -&gt; ShowS)
@@ -136,7 +136,7 @@ $cshow :: OperationalCertificateIssueCounter -&gt; String
 showsPrec :: Int -&gt; OperationalCertificateIssueCounter -&gt; ShowS
 $cshowsPrec :: Int -&gt; OperationalCertificateIssueCounter -&gt; ShowS
 </span><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/base-4.14.3.0/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></a></span></span></span></span><span class="hs-special">)</span><span>
-</span><span id="line-61"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">anyclass</span></span><span> </span><span id="local-6989586621679490550"><span id="local-6989586621679490552"><span class="annot"><span class="annottext">HasTypeProxy OperationalCertificateIssueCounter
+</span><span id="line-61"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">anyclass</span></span><span> </span><span id="local-6989586621679492276"><span id="local-6989586621679492278"><span class="annot"><span class="annottext">HasTypeProxy OperationalCertificateIssueCounter
 HasTypeProxy OperationalCertificateIssueCounter
 -&gt; (OperationalCertificateIssueCounter -&gt; ByteString)
 -&gt; (AsType OperationalCertificateIssueCounter
@@ -161,28 +161,28 @@ $cdeserialiseFromCBOR :: AsType OperationalCertificateIssueCounter
 serialiseToCBOR :: OperationalCertificateIssueCounter -&gt; ByteString
 $cserialiseToCBOR :: OperationalCertificateIssueCounter -&gt; ByteString
 $cp1SerialiseAsCBOR :: HasTypeProxy OperationalCertificateIssueCounter
-</span><a href="#local-6989586621679490550"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var">SerialiseAsCBOR</span></a></span></span></span><span>
+</span><a href="#local-6989586621679492276"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var">SerialiseAsCBOR</span></a></span></span></span><span>
 </span><span id="line-62"></span><span>
-</span><span id="line-63"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679490544"><span id="local-6989586621679490546"><span class="annot"><span class="hs-identifier hs-type">ToCBOR</span></span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-type">OperationalCertificate</span></a></span></span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-64"></span><span>    </span><span id="local-6989586621679490542"><span class="annot"><span class="annottext">toCBOR :: OperationalCertificate -&gt; Encoding
-</span><span class="hs-identifier hs-var hs-var hs-var hs-var">toCBOR</span></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-type">OperationalCertificate</span></a></span><span> </span><span id="local-6989586621679490540"><span class="annot"><span class="annottext">OCert StandardCrypto
-</span><a href="#local-6989586621679490540"><span class="hs-identifier hs-var">ocert</span></a></span></span><span> </span><span id="local-6989586621679490539"><span class="annot"><span class="annottext">VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490539"><span class="hs-identifier hs-var">vkey</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-63"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679492270"><span id="local-6989586621679492272"><span class="annot"><span class="hs-identifier hs-type">ToCBOR</span></span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-type">OperationalCertificate</span></a></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-64"></span><span>    </span><span id="local-6989586621679492268"><span class="annot"><span class="annottext">toCBOR :: OperationalCertificate -&gt; Encoding
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">toCBOR</span></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-type">OperationalCertificate</span></a></span><span> </span><span id="local-6989586621679492266"><span class="annot"><span class="annottext">OCert StandardCrypto
+</span><a href="#local-6989586621679492266"><span class="hs-identifier hs-var">ocert</span></a></span></span><span> </span><span id="local-6989586621679492265"><span class="annot"><span class="annottext">VerificationKey StakePoolKey
+</span><a href="#local-6989586621679492265"><span class="hs-identifier hs-var">vkey</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
 </span><span id="line-65"></span><span>      </span><span class="annot"><span class="annottext">(CBORGroup (OCert StandardCrypto), VerificationKey StakePoolKey)
 -&gt; Encoding
 forall a. ToCBOR a =&gt; a -&gt; Encoding
 </span><span class="hs-identifier hs-var">toCBOR</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">OCert StandardCrypto -&gt; CBORGroup (OCert StandardCrypto)
 forall a. a -&gt; CBORGroup a
 </span><span class="hs-identifier hs-var">CBOR.CBORGroup</span></span><span> </span><span class="annot"><span class="annottext">OCert StandardCrypto
-</span><a href="#local-6989586621679490540"><span class="hs-identifier hs-var">ocert</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490539"><span class="hs-identifier hs-var">vkey</span></a></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679492266"><span class="hs-identifier hs-var">ocert</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
+</span><a href="#local-6989586621679492265"><span class="hs-identifier hs-var">vkey</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-66"></span><span>
-</span><span id="line-67"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679490534"><span class="annot"><span class="hs-identifier hs-type">FromCBOR</span></span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-type">OperationalCertificate</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-68"></span><span>    </span><span id="local-6989586621679490532"><span class="annot"><span class="annottext">fromCBOR :: Decoder s OperationalCertificate
+</span><span id="line-67"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679492260"><span class="annot"><span class="hs-identifier hs-type">FromCBOR</span></span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-type">OperationalCertificate</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-68"></span><span>    </span><span id="local-6989586621679492258"><span class="annot"><span class="annottext">fromCBOR :: Decoder s OperationalCertificate
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var">fromCBOR</span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-69"></span><span>      </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">CBOR.CBORGroup</span></span><span> </span><span id="local-6989586621679490530"><span class="annot"><span class="annottext">OCert StandardCrypto
-</span><a href="#local-6989586621679490530"><span class="hs-identifier hs-var">ocert</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679490529"><span class="annot"><span class="annottext">VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490529"><span class="hs-identifier hs-var">vkey</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Decoder
+</span><span id="line-69"></span><span>      </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">CBOR.CBORGroup</span></span><span> </span><span id="local-6989586621679492256"><span class="annot"><span class="annottext">OCert StandardCrypto
+</span><a href="#local-6989586621679492256"><span class="hs-identifier hs-var">ocert</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679492255"><span class="annot"><span class="annottext">VerificationKey StakePoolKey
+</span><a href="#local-6989586621679492255"><span class="hs-identifier hs-var">vkey</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Decoder
   s (CBORGroup (OCert StandardCrypto), VerificationKey StakePoolKey)
 forall a s. FromCBOR a =&gt; Decoder s a
 </span><span class="hs-identifier hs-var">fromCBOR</span></span><span>
@@ -191,26 +191,26 @@ forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; m a
 </span><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/base-4.14.3.0/src"><span class="hs-identifier hs-var">return</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">OCert StandardCrypto
 -&gt; VerificationKey StakePoolKey -&gt; OperationalCertificate
 </span><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-var">OperationalCertificate</span></a></span><span> </span><span class="annot"><span class="annottext">OCert StandardCrypto
-</span><a href="#local-6989586621679490530"><span class="hs-identifier hs-var">ocert</span></a></span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490529"><span class="hs-identifier hs-var">vkey</span></a></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679492256"><span class="hs-identifier hs-var">ocert</span></a></span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
+</span><a href="#local-6989586621679492255"><span class="hs-identifier hs-var">vkey</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-71"></span><span>
-</span><span id="line-72"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679490523"><span id="local-6989586621679490525"><span class="annot"><span class="hs-identifier hs-type">ToCBOR</span></span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificateIssueCounter"><span class="hs-identifier hs-type">OperationalCertificateIssueCounter</span></a></span></span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-73"></span><span>    </span><span id="local-6989586621679490522"><span class="annot"><span class="annottext">toCBOR :: OperationalCertificateIssueCounter -&gt; Encoding
-</span><a href="#local-6989586621679490522"><span class="hs-identifier hs-var hs-var hs-var hs-var">toCBOR</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificateIssueCounter"><span class="hs-identifier hs-type">OperationalCertificateIssueCounter</span></a></span><span> </span><span id="local-6989586621679490521"><span class="annot"><span class="annottext">Word64
-</span><a href="#local-6989586621679490521"><span class="hs-identifier hs-var">counter</span></a></span></span><span> </span><span id="local-6989586621679490520"><span class="annot"><span class="annottext">VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490520"><span class="hs-identifier hs-var">vkey</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-72"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679492249"><span id="local-6989586621679492251"><span class="annot"><span class="hs-identifier hs-type">ToCBOR</span></span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificateIssueCounter"><span class="hs-identifier hs-type">OperationalCertificateIssueCounter</span></a></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-73"></span><span>    </span><span id="local-6989586621679492248"><span class="annot"><span class="annottext">toCBOR :: OperationalCertificateIssueCounter -&gt; Encoding
+</span><a href="#local-6989586621679492248"><span class="hs-identifier hs-var hs-var hs-var hs-var">toCBOR</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificateIssueCounter"><span class="hs-identifier hs-type">OperationalCertificateIssueCounter</span></a></span><span> </span><span id="local-6989586621679492247"><span class="annot"><span class="annottext">Word64
+</span><a href="#local-6989586621679492247"><span class="hs-identifier hs-var">counter</span></a></span></span><span> </span><span id="local-6989586621679492246"><span class="annot"><span class="annottext">VerificationKey StakePoolKey
+</span><a href="#local-6989586621679492246"><span class="hs-identifier hs-var">vkey</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
 </span><span id="line-74"></span><span>      </span><span class="annot"><span class="annottext">(Word64, VerificationKey StakePoolKey) -&gt; Encoding
 forall a. ToCBOR a =&gt; a -&gt; Encoding
 </span><span class="hs-identifier hs-var">toCBOR</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Word64
-</span><a href="#local-6989586621679490521"><span class="hs-identifier hs-var">counter</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490520"><span class="hs-identifier hs-var">vkey</span></a></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679492247"><span class="hs-identifier hs-var">counter</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
+</span><a href="#local-6989586621679492246"><span class="hs-identifier hs-var">vkey</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-75"></span><span>
-</span><span id="line-76"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679490516"><span class="annot"><span class="hs-identifier hs-type">FromCBOR</span></span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificateIssueCounter"><span class="hs-identifier hs-type">OperationalCertificateIssueCounter</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-77"></span><span>    </span><span id="local-6989586621679490515"><span class="annot"><span class="annottext">fromCBOR :: Decoder s OperationalCertificateIssueCounter
-</span><a href="#local-6989586621679490515"><span class="hs-identifier hs-var hs-var hs-var hs-var">fromCBOR</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-78"></span><span>      </span><span class="hs-special">(</span><span id="local-6989586621679490514"><span class="annot"><span class="annottext">Word64
-</span><a href="#local-6989586621679490514"><span class="hs-identifier hs-var">counter</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679490513"><span class="annot"><span class="annottext">VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490513"><span class="hs-identifier hs-var">vkey</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Decoder s (Word64, VerificationKey StakePoolKey)
+</span><span id="line-76"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679492242"><span class="annot"><span class="hs-identifier hs-type">FromCBOR</span></span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificateIssueCounter"><span class="hs-identifier hs-type">OperationalCertificateIssueCounter</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-77"></span><span>    </span><span id="local-6989586621679492241"><span class="annot"><span class="annottext">fromCBOR :: Decoder s OperationalCertificateIssueCounter
+</span><a href="#local-6989586621679492241"><span class="hs-identifier hs-var hs-var hs-var hs-var">fromCBOR</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-78"></span><span>      </span><span class="hs-special">(</span><span id="local-6989586621679492240"><span class="annot"><span class="annottext">Word64
+</span><a href="#local-6989586621679492240"><span class="hs-identifier hs-var">counter</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679492239"><span class="annot"><span class="annottext">VerificationKey StakePoolKey
+</span><a href="#local-6989586621679492239"><span class="hs-identifier hs-var">vkey</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Decoder s (Word64, VerificationKey StakePoolKey)
 forall a s. FromCBOR a =&gt; Decoder s a
 </span><span class="hs-identifier hs-var">fromCBOR</span></span><span>
 </span><span id="line-79"></span><span>      </span><span class="annot"><span class="annottext">OperationalCertificateIssueCounter
@@ -220,33 +220,33 @@ forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; m a
 -&gt; VerificationKey StakePoolKey
 -&gt; OperationalCertificateIssueCounter
 </span><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificateIssueCounter"><span class="hs-identifier hs-var">OperationalCertificateIssueCounter</span></a></span><span> </span><span class="annot"><span class="annottext">Word64
-</span><a href="#local-6989586621679490514"><span class="hs-identifier hs-var">counter</span></a></span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490513"><span class="hs-identifier hs-var">vkey</span></a></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679492240"><span class="hs-identifier hs-var">counter</span></a></span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
+</span><a href="#local-6989586621679492239"><span class="hs-identifier hs-var">vkey</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-80"></span><span>
 </span><span id="line-81"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Cardano.Api.HasTypeProxy.html#HasTypeProxy"><span class="hs-identifier hs-type">HasTypeProxy</span></a></span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-type">OperationalCertificate</span></a></span><span> </span><span class="hs-keyword">where</span><span>
 </span><span id="line-82"></span><span>    </span><span class="hs-keyword">data</span><span> </span><span id="AsType"><span class="annot"><a href="Cardano.Api.HasTypeProxy.html#AsType"><span class="hs-identifier hs-var">AsType</span></a></span></span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-type">OperationalCertificate</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="AsOperationalCertificate"><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#AsOperationalCertificate"><span class="hs-identifier hs-var">AsOperationalCertificate</span></a></span></span><span>
-</span><span id="line-83"></span><span>    </span><span id="local-6989586621679490509"><span class="annot"><span class="annottext">proxyToAsType :: Proxy OperationalCertificate -&gt; AsType OperationalCertificate
+</span><span id="line-83"></span><span>    </span><span id="local-6989586621679492235"><span class="annot"><span class="annottext">proxyToAsType :: Proxy OperationalCertificate -&gt; AsType OperationalCertificate
 </span><a href="Cardano.Api.HasTypeProxy.html#proxyToAsType"><span class="hs-identifier hs-var hs-var hs-var hs-var">proxyToAsType</span></a></span></span><span> </span><span class="annot"><span class="annottext">Proxy OperationalCertificate
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">AsType OperationalCertificate
 </span><a href="Cardano.Api.OperationalCertificate.html#AsOperationalCertificate"><span class="hs-identifier hs-var">AsOperationalCertificate</span></a></span><span>
 </span><span id="line-84"></span><span>
 </span><span id="line-85"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Cardano.Api.HasTypeProxy.html#HasTypeProxy"><span class="hs-identifier hs-type">HasTypeProxy</span></a></span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificateIssueCounter"><span class="hs-identifier hs-type">OperationalCertificateIssueCounter</span></a></span><span> </span><span class="hs-keyword">where</span><span>
 </span><span id="line-86"></span><span>    </span><span class="hs-keyword">data</span><span> </span><span id="AsType"><span class="annot"><a href="Cardano.Api.HasTypeProxy.html#AsType"><span class="hs-identifier hs-var">AsType</span></a></span></span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificateIssueCounter"><span class="hs-identifier hs-type">OperationalCertificateIssueCounter</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="AsOperationalCertificateIssueCounter"><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#AsOperationalCertificateIssueCounter"><span class="hs-identifier hs-var">AsOperationalCertificateIssueCounter</span></a></span></span><span>
-</span><span id="line-87"></span><span>    </span><span id="local-6989586621679490505"><span class="annot"><span class="annottext">proxyToAsType :: Proxy OperationalCertificateIssueCounter
+</span><span id="line-87"></span><span>    </span><span id="local-6989586621679492231"><span class="annot"><span class="annottext">proxyToAsType :: Proxy OperationalCertificateIssueCounter
 -&gt; AsType OperationalCertificateIssueCounter
-</span><a href="#local-6989586621679490505"><span class="hs-identifier hs-var hs-var hs-var hs-var">proxyToAsType</span></a></span></span><span> </span><span class="annot"><span class="annottext">Proxy OperationalCertificateIssueCounter
+</span><a href="#local-6989586621679492231"><span class="hs-identifier hs-var hs-var hs-var hs-var">proxyToAsType</span></a></span></span><span> </span><span class="annot"><span class="annottext">Proxy OperationalCertificateIssueCounter
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">AsType OperationalCertificateIssueCounter
 </span><a href="Cardano.Api.OperationalCertificate.html#AsOperationalCertificateIssueCounter"><span class="hs-identifier hs-var">AsOperationalCertificateIssueCounter</span></a></span><span>
 </span><span id="line-88"></span><span>
-</span><span id="line-89"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679490501"><span class="annot"><a href="Cardano.Api.SerialiseTextEnvelope.html#HasTextEnvelope"><span class="hs-identifier hs-type">HasTextEnvelope</span></a></span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-type">OperationalCertificate</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-90"></span><span>    </span><span id="local-6989586621679490499"><span class="annot"><span class="annottext">textEnvelopeType :: AsType OperationalCertificate -&gt; TextEnvelopeType
+</span><span id="line-89"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679492227"><span class="annot"><a href="Cardano.Api.SerialiseTextEnvelope.html#HasTextEnvelope"><span class="hs-identifier hs-type">HasTextEnvelope</span></a></span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-type">OperationalCertificate</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-90"></span><span>    </span><span id="local-6989586621679492225"><span class="annot"><span class="annottext">textEnvelopeType :: AsType OperationalCertificate -&gt; TextEnvelopeType
 </span><a href="Cardano.Api.SerialiseTextEnvelope.html#textEnvelopeType"><span class="hs-identifier hs-var hs-var hs-var hs-var">textEnvelopeType</span></a></span></span><span> </span><span class="annot"><span class="annottext">AsType OperationalCertificate
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">TextEnvelopeType
 </span><span class="hs-string">&quot;NodeOperationalCertificate&quot;</span></span><span>
 </span><span id="line-91"></span><span>
-</span><span id="line-92"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679490494"><span class="annot"><a href="Cardano.Api.SerialiseTextEnvelope.html#HasTextEnvelope"><span class="hs-identifier hs-type">HasTextEnvelope</span></a></span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificateIssueCounter"><span class="hs-identifier hs-type">OperationalCertificateIssueCounter</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-93"></span><span>    </span><span id="local-6989586621679490493"><span class="annot"><span class="annottext">textEnvelopeType :: AsType OperationalCertificateIssueCounter -&gt; TextEnvelopeType
-</span><a href="#local-6989586621679490493"><span class="hs-identifier hs-var hs-var hs-var hs-var">textEnvelopeType</span></a></span></span><span> </span><span class="annot"><span class="annottext">AsType OperationalCertificateIssueCounter
+</span><span id="line-92"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679492220"><span class="annot"><a href="Cardano.Api.SerialiseTextEnvelope.html#HasTextEnvelope"><span class="hs-identifier hs-type">HasTextEnvelope</span></a></span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificateIssueCounter"><span class="hs-identifier hs-type">OperationalCertificateIssueCounter</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-93"></span><span>    </span><span id="local-6989586621679492219"><span class="annot"><span class="annottext">textEnvelopeType :: AsType OperationalCertificateIssueCounter -&gt; TextEnvelopeType
+</span><a href="#local-6989586621679492219"><span class="hs-identifier hs-var hs-var hs-var hs-var">textEnvelopeType</span></a></span></span><span> </span><span class="annot"><span class="annottext">AsType OperationalCertificateIssueCounter
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">TextEnvelopeType
 </span><span class="hs-string">&quot;NodeOperationalCertificateIssueCounter&quot;</span></span><span>
 </span><span id="line-94"></span><span>
@@ -259,7 +259,7 @@ forall (m :: * -&gt; *) a. Monad m =&gt; a -&gt; m a
 </span><span id="line-101"></span><span>       </span><span class="hs-comment">--</span><span>
 </span><span id="line-102"></span><span>       </span><span id="OperationalCertKeyMismatch"><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertKeyMismatch"><span class="hs-identifier hs-var">OperationalCertKeyMismatch</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.Key.html#VerificationKey"><span class="hs-identifier hs-type">VerificationKey</span></a></span><span> </span><span class="annot"><a href="Cardano.Api.KeysShelley.html#StakePoolKey"><span class="hs-identifier hs-type">StakePoolKey</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-103"></span><span>                                  </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.Key.html#VerificationKey"><span class="hs-identifier hs-type">VerificationKey</span></a></span><span> </span><span class="annot"><a href="Cardano.Api.KeysShelley.html#StakePoolKey"><span class="hs-identifier hs-type">StakePoolKey</span></a></span><span class="hs-special">)</span><span>
-</span><span id="line-104"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span id="local-6989586621679490486"><span id="local-6989586621679490488"><span id="local-6989586621679490490"><span class="annot"><span class="annottext">Int -&gt; OperationalCertIssueError -&gt; ShowS
+</span><span id="line-104"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span id="local-6989586621679492212"><span id="local-6989586621679492214"><span id="local-6989586621679492216"><span class="annot"><span class="annottext">Int -&gt; OperationalCertIssueError -&gt; ShowS
 [OperationalCertIssueError] -&gt; ShowS
 OperationalCertIssueError -&gt; String
 (Int -&gt; OperationalCertIssueError -&gt; ShowS)
@@ -277,10 +277,10 @@ $cshowsPrec :: Int -&gt; OperationalCertIssueError -&gt; ShowS
 </span><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/base-4.14.3.0/src"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></a></span></span></span></span><span>
 </span><span id="line-105"></span><span>
 </span><span id="line-106"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Cardano.Api.Error.html#Error"><span class="hs-identifier hs-type">Error</span></a></span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertIssueError"><span class="hs-identifier hs-type">OperationalCertIssueError</span></a></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-107"></span><span>    </span><span id="local-6989586621679490482"><span class="annot"><span class="annottext">displayError :: OperationalCertIssueError -&gt; String
-</span><a href="Cardano.Api.Error.html#displayError"><span class="hs-identifier hs-var hs-var hs-var hs-var">displayError</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertKeyMismatch"><span class="hs-identifier hs-type">OperationalCertKeyMismatch</span></a></span><span> </span><span id="local-6989586621679490480"><span class="annot"><span class="annottext">VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490480"><span class="hs-identifier hs-var">_counterKey</span></a></span></span><span> </span><span id="local-6989586621679490479"><span class="annot"><span class="annottext">VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490479"><span class="hs-identifier hs-var">_signingKey</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-107"></span><span>    </span><span id="local-6989586621679492208"><span class="annot"><span class="annottext">displayError :: OperationalCertIssueError -&gt; String
+</span><a href="Cardano.Api.Error.html#displayError"><span class="hs-identifier hs-var hs-var hs-var hs-var">displayError</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertKeyMismatch"><span class="hs-identifier hs-type">OperationalCertKeyMismatch</span></a></span><span> </span><span id="local-6989586621679492206"><span class="annot"><span class="annottext">VerificationKey StakePoolKey
+</span><a href="#local-6989586621679492206"><span class="hs-identifier hs-var">_counterKey</span></a></span></span><span> </span><span id="local-6989586621679492205"><span class="annot"><span class="annottext">VerificationKey StakePoolKey
+</span><a href="#local-6989586621679492205"><span class="hs-identifier hs-var">_signingKey</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
 </span><span id="line-108"></span><span>      </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;Key mismatch: the signing key does not match the one that goes with the counter&quot;</span></span><span>
 </span><span id="line-109"></span><span>      </span><span class="hs-comment">--TODO: include key ids</span><span>
@@ -304,21 +304,21 @@ $cshowsPrec :: Int -&gt; OperationalCertIssueError -&gt; ShowS
 -&gt; Either
      OperationalCertIssueError
      (OperationalCertificate, OperationalCertificateIssueCounter)
-</span><a href="Cardano.Api.OperationalCertificate.html#issueOperationalCertificate"><span class="hs-identifier hs-var hs-var">issueOperationalCertificate</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.KeysPraos.html#KesVerificationKey"><span class="hs-identifier hs-type">KesVerificationKey</span></a></span><span> </span><span id="local-6989586621679490477"><span class="annot"><a href="#local-6989586621679490477"><span class="hs-identifier hs-var">kesVKey</span></a></span></span><span class="hs-special">)</span><span>
-</span><span id="line-123"></span><span>                            </span><span id="local-6989586621679490476"><span class="annot"><span class="annottext">Either
+</span><a href="Cardano.Api.OperationalCertificate.html#issueOperationalCertificate"><span class="hs-identifier hs-var hs-var">issueOperationalCertificate</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.KeysPraos.html#KesVerificationKey"><span class="hs-identifier hs-type">KesVerificationKey</span></a></span><span> </span><span id="local-6989586621679492203"><span class="annot"><a href="#local-6989586621679492203"><span class="hs-identifier hs-var">kesVKey</span></a></span></span><span class="hs-special">)</span><span>
+</span><span id="line-123"></span><span>                            </span><span id="local-6989586621679492202"><span class="annot"><span class="annottext">Either
   (SigningKey StakePoolKey) (SigningKey GenesisDelegateExtendedKey)
-</span><a href="#local-6989586621679490476"><span class="hs-identifier hs-var">skey</span></a></span></span><span>
-</span><span id="line-124"></span><span>                            </span><span id="local-6989586621679490475"><span class="annot"><span class="annottext">KESPeriod
-</span><a href="#local-6989586621679490475"><span class="hs-identifier hs-var">kesPeriod</span></a></span></span><span>
-</span><span id="line-125"></span><span>                            </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificateIssueCounter"><span class="hs-identifier hs-type">OperationalCertificateIssueCounter</span></a></span><span> </span><span id="local-6989586621679490474"><span class="annot"><span class="annottext">Word64
-</span><a href="#local-6989586621679490474"><span class="hs-identifier hs-var">counter</span></a></span></span><span> </span><span id="local-6989586621679490473"><span class="annot"><span class="annottext">VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490473"><span class="hs-identifier hs-var">poolVKey</span></a></span></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679492202"><span class="hs-identifier hs-var">skey</span></a></span></span><span>
+</span><span id="line-124"></span><span>                            </span><span id="local-6989586621679492201"><span class="annot"><span class="annottext">KESPeriod
+</span><a href="#local-6989586621679492201"><span class="hs-identifier hs-var">kesPeriod</span></a></span></span><span>
+</span><span id="line-125"></span><span>                            </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificateIssueCounter"><span class="hs-identifier hs-type">OperationalCertificateIssueCounter</span></a></span><span> </span><span id="local-6989586621679492200"><span class="annot"><span class="annottext">Word64
+</span><a href="#local-6989586621679492200"><span class="hs-identifier hs-var">counter</span></a></span></span><span> </span><span id="local-6989586621679492199"><span class="annot"><span class="annottext">VerificationKey StakePoolKey
+</span><a href="#local-6989586621679492199"><span class="hs-identifier hs-var">poolVKey</span></a></span></span><span class="hs-special">)</span><span>
 </span><span id="line-126"></span><span>    </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490473"><span class="hs-identifier hs-var">poolVKey</span></a></span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
+</span><a href="#local-6989586621679492199"><span class="hs-identifier hs-var">poolVKey</span></a></span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
 -&gt; VerificationKey StakePoolKey -&gt; Bool
 forall a. Eq a =&gt; a -&gt; a -&gt; Bool
 </span><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/ghc-prim-0.6.1/src"><span class="hs-operator hs-var">/=</span></a></span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490471"><span class="hs-identifier hs-var">poolVKey'</span></a></span><span>
+</span><a href="#local-6989586621679492197"><span class="hs-identifier hs-var">poolVKey'</span></a></span><span>
 </span><span id="line-127"></span><span>    </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">OperationalCertIssueError
 -&gt; Either
      OperationalCertIssueError
@@ -327,8 +327,8 @@ forall a b. a -&gt; Either a b
 </span><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/base-4.14.3.0/src"><span class="hs-identifier hs-var">Left</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
 -&gt; VerificationKey StakePoolKey -&gt; OperationalCertIssueError
 </span><a href="Cardano.Api.OperationalCertificate.html#OperationalCertKeyMismatch"><span class="hs-identifier hs-var">OperationalCertKeyMismatch</span></a></span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490473"><span class="hs-identifier hs-var">poolVKey</span></a></span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490471"><span class="hs-identifier hs-var">poolVKey'</span></a></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679492199"><span class="hs-identifier hs-var">poolVKey</span></a></span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
+</span><a href="#local-6989586621679492197"><span class="hs-identifier hs-var">poolVKey'</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-128"></span><span>
 </span><span id="line-129"></span><span>    </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
 </span><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/base-4.14.3.0/src"><span class="hs-identifier hs-var">otherwise</span></a></span><span>
@@ -340,20 +340,20 @@ forall a b. b -&gt; Either a b
 </span><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/base-4.14.3.0/src"><span class="hs-identifier hs-var">Right</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">OCert StandardCrypto
 -&gt; VerificationKey StakePoolKey -&gt; OperationalCertificate
 </span><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-var">OperationalCertificate</span></a></span><span> </span><span class="annot"><span class="annottext">OCert StandardCrypto
-</span><a href="#local-6989586621679490470"><span class="hs-identifier hs-var">ocert</span></a></span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490473"><span class="hs-identifier hs-var">poolVKey</span></a></span><span class="hs-special">,</span><span>
+</span><a href="#local-6989586621679492196"><span class="hs-identifier hs-var">ocert</span></a></span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
+</span><a href="#local-6989586621679492199"><span class="hs-identifier hs-var">poolVKey</span></a></span><span class="hs-special">,</span><span>
 </span><span id="line-131"></span><span>            </span><span class="annot"><span class="annottext">Word64
 -&gt; VerificationKey StakePoolKey
 -&gt; OperationalCertificateIssueCounter
 </span><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificateIssueCounter"><span class="hs-identifier hs-var">OperationalCertificateIssueCounter</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Word64 -&gt; Word64
 forall a. Enum a =&gt; a -&gt; a
 </span><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/base-4.14.3.0/src"><span class="hs-identifier hs-var">succ</span></a></span><span> </span><span class="annot"><span class="annottext">Word64
-</span><a href="#local-6989586621679490474"><span class="hs-identifier hs-var">counter</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490473"><span class="hs-identifier hs-var">poolVKey</span></a></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679492200"><span class="hs-identifier hs-var">counter</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
+</span><a href="#local-6989586621679492199"><span class="hs-identifier hs-var">poolVKey</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-132"></span><span>  </span><span class="hs-keyword">where</span><span>
-</span><span id="line-133"></span><span>    </span><span class="annot"><a href="#local-6989586621679490471"><span class="hs-identifier hs-type">poolVKey'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Cardano.Api.Key.html#VerificationKey"><span class="hs-identifier hs-type">VerificationKey</span></a></span><span> </span><span class="annot"><a href="Cardano.Api.KeysShelley.html#StakePoolKey"><span class="hs-identifier hs-type">StakePoolKey</span></a></span><span>
-</span><span id="line-134"></span><span>    </span><span id="local-6989586621679490471"><span class="annot"><span class="annottext">poolVKey' :: VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490471"><span class="hs-identifier hs-var hs-var">poolVKey'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(SigningKey StakePoolKey -&gt; VerificationKey StakePoolKey)
+</span><span id="line-133"></span><span>    </span><span class="annot"><a href="#local-6989586621679492197"><span class="hs-identifier hs-type">poolVKey'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Cardano.Api.Key.html#VerificationKey"><span class="hs-identifier hs-type">VerificationKey</span></a></span><span> </span><span class="annot"><a href="Cardano.Api.KeysShelley.html#StakePoolKey"><span class="hs-identifier hs-type">StakePoolKey</span></a></span><span>
+</span><span id="line-134"></span><span>    </span><span id="local-6989586621679492197"><span class="annot"><span class="annottext">poolVKey' :: VerificationKey StakePoolKey
+</span><a href="#local-6989586621679492197"><span class="hs-identifier hs-var hs-var">poolVKey'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(SigningKey StakePoolKey -&gt; VerificationKey StakePoolKey)
 -&gt; (SigningKey GenesisDelegateExtendedKey
     -&gt; VerificationKey StakePoolKey)
 -&gt; Either
@@ -366,7 +366,7 @@ Key keyrole =&gt;
 SigningKey keyrole -&gt; VerificationKey keyrole
 </span><a href="Cardano.Api.Key.html#getVerificationKey"><span class="hs-identifier hs-var">getVerificationKey</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">VerificationKey GenesisDelegateExtendedKey
 -&gt; VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490466"><span class="hs-identifier hs-var">convert</span></a></span><span> </span><span class="annot"><span class="annottext">(VerificationKey GenesisDelegateExtendedKey
+</span><a href="#local-6989586621679492192"><span class="hs-identifier hs-var">convert</span></a></span><span> </span><span class="annot"><span class="annottext">(VerificationKey GenesisDelegateExtendedKey
  -&gt; VerificationKey StakePoolKey)
 -&gt; (SigningKey GenesisDelegateExtendedKey
     -&gt; VerificationKey GenesisDelegateExtendedKey)
@@ -380,13 +380,13 @@ Key keyrole =&gt;
 SigningKey keyrole -&gt; VerificationKey keyrole
 </span><a href="Cardano.Api.Key.html#getVerificationKey"><span class="hs-identifier hs-var">getVerificationKey</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Either
   (SigningKey StakePoolKey) (SigningKey GenesisDelegateExtendedKey)
-</span><a href="#local-6989586621679490476"><span class="hs-identifier hs-var">skey</span></a></span><span>
+</span><a href="#local-6989586621679492202"><span class="hs-identifier hs-var">skey</span></a></span><span>
 </span><span id="line-135"></span><span>      </span><span class="hs-keyword">where</span><span>
-</span><span id="line-136"></span><span>        </span><span class="annot"><a href="#local-6989586621679490466"><span class="hs-identifier hs-type">convert</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Cardano.Api.Key.html#VerificationKey"><span class="hs-identifier hs-type">VerificationKey</span></a></span><span> </span><span class="annot"><a href="Cardano.Api.KeysShelley.html#GenesisDelegateExtendedKey"><span class="hs-identifier hs-type">GenesisDelegateExtendedKey</span></a></span><span>
+</span><span id="line-136"></span><span>        </span><span class="annot"><a href="#local-6989586621679492192"><span class="hs-identifier hs-type">convert</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Cardano.Api.Key.html#VerificationKey"><span class="hs-identifier hs-type">VerificationKey</span></a></span><span> </span><span class="annot"><a href="Cardano.Api.KeysShelley.html#GenesisDelegateExtendedKey"><span class="hs-identifier hs-type">GenesisDelegateExtendedKey</span></a></span><span>
 </span><span id="line-137"></span><span>                </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Cardano.Api.Key.html#VerificationKey"><span class="hs-identifier hs-type">VerificationKey</span></a></span><span> </span><span class="annot"><a href="Cardano.Api.KeysShelley.html#StakePoolKey"><span class="hs-identifier hs-type">StakePoolKey</span></a></span><span>
-</span><span id="line-138"></span><span>        </span><span id="local-6989586621679490466"><span class="annot"><span class="annottext">convert :: VerificationKey GenesisDelegateExtendedKey
+</span><span id="line-138"></span><span>        </span><span id="local-6989586621679492192"><span class="annot"><span class="annottext">convert :: VerificationKey GenesisDelegateExtendedKey
 -&gt; VerificationKey StakePoolKey
-</span><a href="#local-6989586621679490466"><span class="hs-identifier hs-var hs-var">convert</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">VerificationKey GenesisDelegateKey -&gt; VerificationKey StakePoolKey
+</span><a href="#local-6989586621679492192"><span class="hs-identifier hs-var hs-var">convert</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">VerificationKey GenesisDelegateKey -&gt; VerificationKey StakePoolKey
 forall keyroleA keyroleB.
 CastVerificationKeyRole keyroleA keyroleB =&gt;
 VerificationKey keyroleA -&gt; VerificationKey keyroleB
@@ -407,9 +407,9 @@ VerificationKey keyroleA -&gt; VerificationKey keyroleB
 </span><a href="Cardano.Api.Key.html#castVerificationKey"><span class="hs-identifier hs-var">castVerificationKey</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Cardano.Api.Key.html#VerificationKey"><span class="hs-identifier hs-type">VerificationKey</span></a></span><span> </span><span class="annot"><a href="Cardano.Api.KeysShelley.html#GenesisDelegateExtendedKey"><span class="hs-identifier hs-type">GenesisDelegateExtendedKey</span></a></span><span>
 </span><span id="line-141"></span><span>                                       </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Cardano.Api.Key.html#VerificationKey"><span class="hs-identifier hs-type">VerificationKey</span></a></span><span> </span><span class="annot"><a href="Cardano.Api.KeysShelley.html#GenesisDelegateKey"><span class="hs-identifier hs-type">GenesisDelegateKey</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-142"></span><span>
-</span><span id="line-143"></span><span>    </span><span class="annot"><a href="#local-6989586621679490470"><span class="hs-identifier hs-type">ocert</span></a></span><span>     </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Shelley.OCert</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">StandardCrypto</span></span><span>
-</span><span id="line-144"></span><span>    </span><span id="local-6989586621679490470"><span class="annot"><span class="annottext">ocert :: OCert StandardCrypto
-</span><a href="#local-6989586621679490470"><span class="hs-identifier hs-var hs-var">ocert</span></a></span></span><span>     </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">VerKeyKES StandardCrypto
+</span><span id="line-143"></span><span>    </span><span class="annot"><a href="#local-6989586621679492196"><span class="hs-identifier hs-type">ocert</span></a></span><span>     </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Shelley.OCert</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">StandardCrypto</span></span><span>
+</span><span id="line-144"></span><span>    </span><span id="local-6989586621679492196"><span class="annot"><span class="annottext">ocert :: OCert StandardCrypto
+</span><a href="#local-6989586621679492196"><span class="hs-identifier hs-var hs-var">ocert</span></a></span></span><span>     </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">VerKeyKES StandardCrypto
 -&gt; Word64
 -&gt; KESPeriod
 -&gt; SignedDSIGN StandardCrypto (OCertSignable StandardCrypto)
@@ -421,16 +421,16 @@ VerKeyKES crypto
 -&gt; SignedDSIGN crypto (OCertSignable crypto)
 -&gt; OCert crypto
 </span><span class="hs-identifier hs-var">Shelley.OCert</span></span><span> </span><span class="annot"><span class="annottext">VerKeyKES StandardCrypto
-</span><a href="#local-6989586621679490477"><span class="hs-identifier hs-var">kesVKey</span></a></span><span> </span><span class="annot"><span class="annottext">Word64
-</span><a href="#local-6989586621679490474"><span class="hs-identifier hs-var">counter</span></a></span><span> </span><span class="annot"><span class="annottext">KESPeriod
-</span><a href="#local-6989586621679490475"><span class="hs-identifier hs-var">kesPeriod</span></a></span><span> </span><span class="annot"><span class="annottext">SignedDSIGN StandardCrypto (OCertSignable StandardCrypto)
-</span><a href="#local-6989586621679490462"><span class="hs-keyword hs-var">signature</span></a></span><span>
+</span><a href="#local-6989586621679492203"><span class="hs-identifier hs-var">kesVKey</span></a></span><span> </span><span class="annot"><span class="annottext">Word64
+</span><a href="#local-6989586621679492200"><span class="hs-identifier hs-var">counter</span></a></span><span> </span><span class="annot"><span class="annottext">KESPeriod
+</span><a href="#local-6989586621679492201"><span class="hs-identifier hs-var">kesPeriod</span></a></span><span> </span><span class="annot"><span class="annottext">SignedDSIGN StandardCrypto (OCertSignable StandardCrypto)
+</span><a href="#local-6989586621679492188"><span class="hs-keyword hs-var">signature</span></a></span><span>
 </span><span id="line-145"></span><span>
-</span><span id="line-146"></span><span>    </span><span class="annot"><a href="#local-6989586621679490462"><span class="hs-keyword hs-type">signature</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Shelley.SignedDSIGN</span></span><span>
+</span><span id="line-146"></span><span>    </span><span class="annot"><a href="#local-6989586621679492188"><span class="hs-keyword hs-type">signature</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Shelley.SignedDSIGN</span></span><span>
 </span><span id="line-147"></span><span>                   </span><span class="annot"><span class="hs-identifier hs-type">StandardCrypto</span></span><span>
 </span><span id="line-148"></span><span>                   </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Shelley.OCertSignable</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">StandardCrypto</span></span><span class="hs-special">)</span><span>
-</span><span id="line-149"></span><span>    </span><span id="local-6989586621679490462"><span class="annot"><span class="annottext">signature :: SignedDSIGN StandardCrypto (OCertSignable StandardCrypto)
-</span><a href="#local-6989586621679490462"><span class="hs-keyword hs-var hs-var">signature</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">OCertSignable StandardCrypto
+</span><span id="line-149"></span><span>    </span><span id="local-6989586621679492188"><span class="annot"><span class="annottext">signature :: SignedDSIGN StandardCrypto (OCertSignable StandardCrypto)
+</span><a href="#local-6989586621679492188"><span class="hs-keyword hs-var hs-var">signature</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">OCertSignable StandardCrypto
 -&gt; ShelleySigningKey
 -&gt; SignedDSIGN StandardCrypto (OCertSignable StandardCrypto)
 forall tosign.
@@ -442,30 +442,30 @@ tosign -&gt; ShelleySigningKey -&gt; SignedDSIGN StandardCrypto tosign
 forall crypto.
 VerKeyKES crypto -&gt; Word64 -&gt; KESPeriod -&gt; OCertSignable crypto
 </span><span class="hs-identifier hs-var">Shelley.OCertSignable</span></span><span> </span><span class="annot"><span class="annottext">VerKeyKES StandardCrypto
-</span><a href="#local-6989586621679490477"><span class="hs-identifier hs-var">kesVKey</span></a></span><span> </span><span class="annot"><span class="annottext">Word64
-</span><a href="#local-6989586621679490474"><span class="hs-identifier hs-var">counter</span></a></span><span> </span><span class="annot"><span class="annottext">KESPeriod
-</span><a href="#local-6989586621679490475"><span class="hs-identifier hs-var">kesPeriod</span></a></span><span class="hs-special">)</span><span>
+</span><a href="#local-6989586621679492203"><span class="hs-identifier hs-var">kesVKey</span></a></span><span> </span><span class="annot"><span class="annottext">Word64
+</span><a href="#local-6989586621679492200"><span class="hs-identifier hs-var">counter</span></a></span><span> </span><span class="annot"><span class="annottext">KESPeriod
+</span><a href="#local-6989586621679492201"><span class="hs-identifier hs-var">kesPeriod</span></a></span><span class="hs-special">)</span><span>
 </span><span id="line-151"></span><span>                  </span><span class="annot"><span class="annottext">ShelleySigningKey
-</span><a href="#local-6989586621679490459"><span class="hs-identifier hs-var">skey'</span></a></span><span>
+</span><a href="#local-6989586621679492185"><span class="hs-identifier hs-var">skey'</span></a></span><span>
 </span><span id="line-152"></span><span>      </span><span class="hs-keyword">where</span><span>
-</span><span id="line-153"></span><span>        </span><span class="annot"><a href="#local-6989586621679490459"><span class="hs-identifier hs-type">skey'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Cardano.Api.Tx.html#ShelleySigningKey"><span class="hs-identifier hs-type">ShelleySigningKey</span></a></span><span>
-</span><span id="line-154"></span><span>        </span><span id="local-6989586621679490459"><span class="annot"><span class="annottext">skey' :: ShelleySigningKey
-</span><a href="#local-6989586621679490459"><span class="hs-identifier hs-var hs-var">skey'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">Either
+</span><span id="line-153"></span><span>        </span><span class="annot"><a href="#local-6989586621679492185"><span class="hs-identifier hs-type">skey'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Cardano.Api.Tx.html#ShelleySigningKey"><span class="hs-identifier hs-type">ShelleySigningKey</span></a></span><span>
+</span><span id="line-154"></span><span>        </span><span id="local-6989586621679492185"><span class="annot"><span class="annottext">skey' :: ShelleySigningKey
+</span><a href="#local-6989586621679492185"><span class="hs-identifier hs-var hs-var">skey'</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">Either
   (SigningKey StakePoolKey) (SigningKey GenesisDelegateExtendedKey)
-</span><a href="#local-6989586621679490476"><span class="hs-identifier hs-var">skey</span></a></span><span> </span><span class="hs-keyword">of</span><span>
-</span><span id="line-155"></span><span>                  </span><span class="annot"><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/base-4.14.3.0/src"><span class="hs-identifier hs-type">Left</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.KeysShelley.html#StakePoolSigningKey"><span class="hs-identifier hs-type">StakePoolSigningKey</span></a></span><span> </span><span id="local-6989586621679490457"><span class="annot"><a href="#local-6989586621679490457"><span class="hs-identifier hs-var">poolSKey</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><a href="#local-6989586621679492202"><span class="hs-identifier hs-var">skey</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-155"></span><span>                  </span><span class="annot"><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/base-4.14.3.0/src"><span class="hs-identifier hs-type">Left</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.KeysShelley.html#StakePoolSigningKey"><span class="hs-identifier hs-type">StakePoolSigningKey</span></a></span><span> </span><span id="local-6989586621679492183"><span class="annot"><a href="#local-6989586621679492183"><span class="hs-identifier hs-var">poolSKey</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span>
 </span><span id="line-156"></span><span>                    </span><span class="annot"><span class="annottext">SignKeyDSIGN StandardCrypto -&gt; ShelleySigningKey
 </span><a href="Cardano.Api.Tx.html#ShelleyNormalSigningKey"><span class="hs-identifier hs-var">ShelleyNormalSigningKey</span></a></span><span> </span><span class="annot"><span class="annottext">SignKeyDSIGN StandardCrypto
-</span><a href="#local-6989586621679490457"><span class="hs-identifier hs-var">poolSKey</span></a></span><span>
-</span><span id="line-157"></span><span>                  </span><span class="annot"><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/base-4.14.3.0/src"><span class="hs-identifier hs-type">Right</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.KeysShelley.html#GenesisDelegateExtendedSigningKey"><span class="hs-identifier hs-type">GenesisDelegateExtendedSigningKey</span></a></span><span> </span><span id="local-6989586621679490454"><span class="annot"><a href="#local-6989586621679490454"><span class="hs-identifier hs-var">delegSKey</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><a href="#local-6989586621679492183"><span class="hs-identifier hs-var">poolSKey</span></a></span><span>
+</span><span id="line-157"></span><span>                  </span><span class="annot"><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/base-4.14.3.0/src"><span class="hs-identifier hs-type">Right</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.KeysShelley.html#GenesisDelegateExtendedSigningKey"><span class="hs-identifier hs-type">GenesisDelegateExtendedSigningKey</span></a></span><span> </span><span id="local-6989586621679492180"><span class="annot"><a href="#local-6989586621679492180"><span class="hs-identifier hs-var">delegSKey</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span>
 </span><span id="line-158"></span><span>                    </span><span class="annot"><span class="annottext">XPrv -&gt; ShelleySigningKey
 </span><a href="Cardano.Api.Tx.html#ShelleyExtendedSigningKey"><span class="hs-identifier hs-var">ShelleyExtendedSigningKey</span></a></span><span> </span><span class="annot"><span class="annottext">XPrv
-</span><a href="#local-6989586621679490454"><span class="hs-identifier hs-var">delegSKey</span></a></span><span>
+</span><a href="#local-6989586621679492180"><span class="hs-identifier hs-var">delegSKey</span></a></span><span>
 </span><span id="line-159"></span><span>
 </span><span id="line-160"></span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#getHotKey"><span class="hs-identifier hs-type">getHotKey</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-type">OperationalCertificate</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Cardano.Api.Key.html#VerificationKey"><span class="hs-identifier hs-type">VerificationKey</span></a></span><span> </span><span class="annot"><a href="Cardano.Api.KeysPraos.html#KesKey"><span class="hs-identifier hs-type">KesKey</span></a></span><span>
 </span><span id="line-161"></span><span id="getHotKey"><span class="annot"><span class="annottext">getHotKey :: OperationalCertificate -&gt; VerificationKey KesKey
-</span><a href="Cardano.Api.OperationalCertificate.html#getHotKey"><span class="hs-identifier hs-var hs-var">getHotKey</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-type">OperationalCertificate</span></a></span><span> </span><span id="local-6989586621679490452"><span class="annot"><span class="annottext">OCert StandardCrypto
-</span><a href="#local-6989586621679490452"><span class="hs-identifier hs-var">cert</span></a></span></span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
+</span><a href="Cardano.Api.OperationalCertificate.html#getHotKey"><span class="hs-identifier hs-var hs-var">getHotKey</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-type">OperationalCertificate</span></a></span><span> </span><span id="local-6989586621679492178"><span class="annot"><span class="annottext">OCert StandardCrypto
+</span><a href="#local-6989586621679492178"><span class="hs-identifier hs-var">cert</span></a></span></span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
 </span><span class="hs-identifier">_</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">VerKeyKES StandardCrypto -&gt; VerificationKey KesKey
 </span><a href="Cardano.Api.KeysPraos.html#KesVerificationKey"><span class="hs-identifier hs-var">KesVerificationKey</span></a></span><span> </span><span class="annot"><span class="annottext">(VerKeyKES StandardCrypto -&gt; VerificationKey KesKey)
 -&gt; VerKeyKES StandardCrypto -&gt; VerificationKey KesKey
@@ -473,26 +473,26 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/base-4.14.3.0/src"><span class="hs-operator hs-var">$</span></a></span><span> </span><span class="annot"><span class="annottext">OCert StandardCrypto -&gt; VerKeyKES StandardCrypto
 forall crypto. OCert crypto -&gt; VerKeyKES crypto
 </span><span class="hs-identifier hs-var hs-var">Shelley.ocertVkHot</span></span><span> </span><span class="annot"><span class="annottext">OCert StandardCrypto
-</span><a href="#local-6989586621679490452"><span class="hs-identifier hs-var">cert</span></a></span><span>
+</span><a href="#local-6989586621679492178"><span class="hs-identifier hs-var">cert</span></a></span><span>
 </span><span id="line-162"></span><span>
 </span><span id="line-163"></span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#getKesPeriod"><span class="hs-identifier hs-type">getKesPeriod</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-type">OperationalCertificate</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/ghc-prim-0.6.1/src"><span class="hs-identifier hs-type">Word</span></a></span><span>
 </span><span id="line-164"></span><span id="getKesPeriod"><span class="annot"><span class="annottext">getKesPeriod :: OperationalCertificate -&gt; Word
-</span><a href="Cardano.Api.OperationalCertificate.html#getKesPeriod"><span class="hs-identifier hs-var hs-var">getKesPeriod</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-type">OperationalCertificate</span></a></span><span> </span><span id="local-6989586621679490450"><span class="annot"><span class="annottext">OCert StandardCrypto
-</span><a href="#local-6989586621679490450"><span class="hs-identifier hs-var">cert</span></a></span></span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
+</span><a href="Cardano.Api.OperationalCertificate.html#getKesPeriod"><span class="hs-identifier hs-var hs-var">getKesPeriod</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-type">OperationalCertificate</span></a></span><span> </span><span id="local-6989586621679492176"><span class="annot"><span class="annottext">OCert StandardCrypto
+</span><a href="#local-6989586621679492176"><span class="hs-identifier hs-var">cert</span></a></span></span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
 </span><span class="hs-identifier">_</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">KESPeriod -&gt; Word
 </span><span class="hs-identifier hs-var hs-var">Shelley.unKESPeriod</span></span><span> </span><span class="annot"><span class="annottext">(KESPeriod -&gt; Word) -&gt; KESPeriod -&gt; Word
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/base-4.14.3.0/src"><span class="hs-operator hs-var">$</span></a></span><span> </span><span class="annot"><span class="annottext">OCert StandardCrypto -&gt; KESPeriod
 forall crypto. OCert crypto -&gt; KESPeriod
 </span><span class="hs-identifier hs-var hs-var">Shelley.ocertKESPeriod</span></span><span> </span><span class="annot"><span class="annottext">OCert StandardCrypto
-</span><a href="#local-6989586621679490450"><span class="hs-identifier hs-var">cert</span></a></span><span>
+</span><a href="#local-6989586621679492176"><span class="hs-identifier hs-var">cert</span></a></span><span>
 </span><span id="line-165"></span><span>
 </span><span id="line-166"></span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#getOpCertCount"><span class="hs-identifier hs-type">getOpCertCount</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-type">OperationalCertificate</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="../file:///home/runner/.ghcup/ghc/8.10.7/share/doc/ghc-8.10.7/html/libraries/base-4.14.3.0/src"><span class="hs-identifier hs-type">Word64</span></a></span><span>
 </span><span id="line-167"></span><span id="getOpCertCount"><span class="annot"><span class="annottext">getOpCertCount :: OperationalCertificate -&gt; Word64
-</span><a href="Cardano.Api.OperationalCertificate.html#getOpCertCount"><span class="hs-identifier hs-var hs-var">getOpCertCount</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-type">OperationalCertificate</span></a></span><span> </span><span id="local-6989586621679490447"><span class="annot"><span class="annottext">OCert StandardCrypto
-</span><a href="#local-6989586621679490447"><span class="hs-identifier hs-var">cert</span></a></span></span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
+</span><a href="Cardano.Api.OperationalCertificate.html#getOpCertCount"><span class="hs-identifier hs-var hs-var">getOpCertCount</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Cardano.Api.OperationalCertificate.html#OperationalCertificate"><span class="hs-identifier hs-type">OperationalCertificate</span></a></span><span> </span><span id="local-6989586621679492173"><span class="annot"><span class="annottext">OCert StandardCrypto
+</span><a href="#local-6989586621679492173"><span class="hs-identifier hs-var">cert</span></a></span></span><span> </span><span class="annot"><span class="annottext">VerificationKey StakePoolKey
 </span><span class="hs-identifier">_</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">OCert StandardCrypto -&gt; Word64
 forall crypto. OCert crypto -&gt; Word64
 </span><span class="hs-identifier hs-var hs-var">Shelley.ocertN</span></span><span> </span><span class="annot"><span class="annottext">OCert StandardCrypto
-</span><a href="#local-6989586621679490447"><span class="hs-identifier hs-var">cert</span></a></span><span>
+</span><a href="#local-6989586621679492173"><span class="hs-identifier hs-var">cert</span></a></span><span>
 </span><span id="line-168"></span></pre></body></html>
