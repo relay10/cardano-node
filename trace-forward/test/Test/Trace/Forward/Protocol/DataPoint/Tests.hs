@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE RankNTypes #-}
@@ -9,6 +10,7 @@ module Test.Trace.Forward.Protocol.DataPoint.Tests
 import qualified Codec.Serialise as CBOR
 import           Control.Monad.IOSim (runSimOrThrow)
 import           Control.Monad.Class.MonadST
+import           Control.Monad.Class.MonadSTM
 import           Control.Monad.Class.MonadAsync
 import           Control.Monad.Class.MonadThrow
 import           Control.Monad.ST (runST)
@@ -16,6 +18,7 @@ import           Control.Tracer (nullTracer)
 import           Test.Tasty
 import           Test.Tasty.QuickCheck
 
+import           Network.TypedProtocol.Core
 import           Network.TypedProtocol.Codec
 import           Network.TypedProtocol.Proofs
 import           Ouroboros.Network.Channel
@@ -44,7 +47,7 @@ tests = testGroup "Trace.Forward.Protocol.DataPoint"
   ]
 
 prop_codec_DataPointForward
-  :: AnyMessageAndAgency DataPointForward
+  :: AnyMessage DataPointForward
   -> Bool
 prop_codec_DataPointForward msg = runST $
   prop_codecM
@@ -53,7 +56,7 @@ prop_codec_DataPointForward msg = runST $
     msg
 
 prop_codec_splits2_DataPointForward
-  :: AnyMessageAndAgency DataPointForward
+  :: AnyMessage DataPointForward
   -> Bool
 prop_codec_splits2_DataPointForward msg = runST $
   prop_codec_splitsM
@@ -64,7 +67,7 @@ prop_codec_splits2_DataPointForward msg = runST $
 
 
 prop_codec_splits3_DataPointForward
-  :: AnyMessageAndAgency DataPointForward
+  :: AnyMessage DataPointForward
   -> Bool
 prop_codec_splits3_DataPointForward msg = runST $
   prop_codec_splitsM
@@ -91,15 +94,19 @@ prop_connect_DataPointForward
   -> Bool
 prop_connect_DataPointForward f (NonNegative n) =
   case runSimOrThrow
-         (connect
+         (connect [] []
             (dataPointForwarderPeer   dataPointForwarderCount)
             (dataPointAcceptorPeer  $ dataPointAcceptorApply f 0 n)) of
-    (s, c, TerminalStates TokDone TokDone) -> (s, c) == (n, foldr ($) 0 (replicate n f))
+    (s, c, TerminalStates (SingProtocolState SingDone) ReflNobodyAgency
+                          (SingProtocolState SingDone) ReflNobodyAgency) ->
+      (s, c) == (n, foldr ($) 0 (replicate n f))
 
 prop_channel
-  :: ( MonadST    m
-     , MonadAsync m
-     , MonadCatch m
+  :: ( MonadST          m
+     , MonadAsync       m
+     , MonadLabelledSTM m
+     , MonadMask        m
+     , MonadThrow  (STM m)
      )
   => (Int -> Int)
   -> Int
