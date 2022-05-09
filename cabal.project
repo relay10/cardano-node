@@ -257,8 +257,8 @@ source-repository-package
 source-repository-package
   type: git
   location: https://github.com/input-output-hk/ouroboros-network
-  tag: ed5db33e0f0d44b175c25974b6305bfd36e88278
-  --sha256: 1331xpas1vpzliwqkwjzpy42anywf0gx85p6g4x23haphq7limcr
+  tag: 1540f23e08e172fed54b4b54eb30bce68d9e0384
+  --sha256: 1h0r8sa36iylc649mklyg4887dnn1zjbpaf7dq163rspcszxa6kp
   subdir:
     io-sim
     io-classes
@@ -275,6 +275,8 @@ source-repository-package
     strict-stm
     typed-protocols
     typed-protocols-cborg
+    typed-protocols-stateful
+    typed-protocols-stateful-cborg
     typed-protocols-examples
 
 source-repository-package
@@ -294,8 +296,8 @@ source-repository-package
 source-repository-package
   type: git
   location: https://github.com/input-output-hk/ekg-forward
-  tag: 297cd9db5074339a2fb2e5ae7d0780debb670c63
-  --sha256: 1zcwry3y5rmd9lgxy89wsb3k4kpffqji35dc7ghzbz603y1gy24g
+  tag: 13d9c7cfb2b8047520c7ed164ce75ac6128683fd
+  --sha256: 1j3lad5aklrbwn589z6f2bhxvmkz9za4kkp7ic1xxv6zzfcrlbsf
 
 source-repository-package
   type: git
