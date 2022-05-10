@@ -28,6 +28,10 @@ module Cardano.Node.Tracing.Tracers.Consensus
   , namesForBlockFetchClient
   , docBlockFetchClient
 
+  , ClientMetrics(..)
+  , initialClientMetrics
+  , calculateBlockFetchClientMetrics
+
   , severityBlockFetchServer
   , namesForBlockFetchServer
   , docBlockFetchServer
@@ -68,10 +72,15 @@ module Cardano.Node.Tracing.Tracers.Consensus
 
 import           Control.Monad.Class.MonadTime (Time (..))
 import           Data.Aeson (ToJSON, Value (Number, String), toJSON, (.=))
+import           Data.IntPSQ (IntPSQ)
+import qualified Data.IntPSQ as Pq
 import           Data.SOP.Strict
 import qualified Data.Text as Text
-import           Data.Time (DiffTime)
+import           Data.Time (DiffTime, NominalDiffTime)
 import           Text.Show
+
+
+import           Cardano.Slotting.Slot (WithOrigin (..))
 
 import           Cardano.Logging
 import           Cardano.Node.Queries (HasKESInfo (..))
@@ -433,6 +442,367 @@ docBlockFetchDecision = Documented [
 --------------------------------------------------------------------------------
 -- BlockFetchClient Tracer
 --------------------------------------------------------------------------------
+
+data CdfCounter = CdfCounter {
+    limit :: Int64
+  , counter :: Int64
+}
+
+decCdf :: Ord a => Num a => a -> CdfCounter -> CdfCounter
+decCdf v cdf =
+  if v < fromIntegral (limit cdf)
+    then cdf {counter = counter cdf - 1}
+    else cdf
+
+incCdf ::Ord a => Num a => a -> CdfCounter -> CdfCounter
+incCdf v cdf =
+  if v < fromIntegral (limit cdf)
+    then cdf {counter = counter cdf + 1}
+    else cdf
+
+data ClientMetrics = ClientMetrics {
+    cmSlotMap  :: IntPSQ Word64 NominalDiffTime
+  , cmCdf1sVar :: CdfCounter
+  , cmCdf3sVar :: CdfCounter
+  , cmCdf5sVar :: CdfCounter
+  , cmDelay    :: Double
+  , cmBlockSize :: Word32
+  , cmTraceIt  :: Bool
+}
+
+instance LogFormatting ClientMetrics where
+  forMachine _dtal _ = mempty
+  asMetrics ClientMetrics {..} =
+    if cmTraceIt
+      then
+        let  size = Pq.size cmSlotMap
+             msgs =
+               [ DoubleM
+                    "cardano.node.metrics.blockfetchclient.blockdelay.s"
+                    cmDelay
+               , IntM
+                    "cardano.node.metrics.blockfetchclient.blocksize"
+                    (fromIntegral cmBlockSize)
+               , DoubleM "cardano.node.metrics.blockfetchclient.blockdelay.cdfOne"
+                    (fromIntegral (counter cmCdf1sVar) / fromIntegral size)
+               , DoubleM "cardano.node.metrics.blockfetchclient.blockdelay.cdfThree"
+                    (fromIntegral (counter cmCdf3sVar) / fromIntegral size)
+               , DoubleM "cardano.node.metrics.blockfetchclient.blockdelay.cdfFive"
+                    (fromIntegral (counter cmCdf5sVar) / fromIntegral size)
+               ]
+        in if cmDelay > 5
+             then
+               CounterM "cardano.node.metrics.blockfetchclient.lateblocks" Nothing
+                 : msgs
+             else msgs
+      else []
+
+initialClientMetrics :: ClientMetrics
+initialClientMetrics =
+    ClientMetrics
+      Pq.empty
+      (CdfCounter 1 0)
+      (CdfCounter 3 0)
+      (CdfCounter 5 0)
+      0
+      0
+      False
+
+calculateBlockFetchClientMetrics ::
+     ClientMetrics
+  -> LoggingContext
+  -> BlockFetch.TraceLabelPeer peer (BlockFetch.TraceFetchClientState header)
+  -> IO ClientMetrics
+calculateBlockFetchClientMetrics cm@ClientMetrics {..} _lc
+            (TraceLabelPeer _ (BlockFetch.CompletedBlockFetch p _ _ _ forgeDelay blockSize)) =
+    case pointSlot p of
+            Origin -> pure cm {cmTraceIt = False}  -- Nothing to do.
+            At (SlotNo slotNo) -> do
+               if Pq.null cmSlotMap && forgeDelay > 20
+                  then pure cm {cmTraceIt = False} -- During startup wait until we are in sync
+                  else case Pq.lookup (fromIntegral slotNo) cmSlotMap of
+                        Just _ -> pure cm {cmTraceIt = False}  -- dupe, we only track the first
+                        Nothing -> do
+                          let slotMap' = Pq.insert (fromIntegral slotNo) slotNo forgeDelay cmSlotMap
+                          if Pq.size slotMap' > 1080 -- TODO k/2, should come from config file
+                            then case Pq.minView slotMap' of
+                                 Nothing -> pure cm {cmTraceIt = False} -- Err. We just inserted an element!
+                                 Just (_, minSlotNo, minDelay, slotMap'') ->
+                                   if minSlotNo == slotNo
+                                      then pure cm {cmTraceIt = False, cmSlotMap = slotMap'}
+                                      else let
+                                         cdf1sVar = decCdf minDelay cmCdf1sVar
+                                         cdf3sVar = decCdf minDelay cmCdf3sVar
+                                         cdf5sVar = decCdf minDelay cmCdf5sVar
+                                         cdf1sVar' = incCdf forgeDelay cdf1sVar
+                                         cdf3sVar' = incCdf forgeDelay cdf3sVar
+                                         cdf5sVar' = incCdf forgeDelay cdf5sVar
+                                         in pure cm {
+                                              cmCdf1sVar  = cdf1sVar'
+                                            , cmCdf3sVar  = cdf3sVar'
+                                            , cmCdf5sVar  = cdf5sVar'
+                                            , cmDelay     = realToFrac  forgeDelay
+                                            , cmBlockSize = blockSize
+                                            , cmTraceIt   = True
+                                            , cmSlotMap   = slotMap''}
+                            else let
+                               cdf1sVar' = incCdf forgeDelay cmCdf1sVar
+                               cdf3sVar' = incCdf forgeDelay cmCdf3sVar
+                               cdf5sVar' = incCdf forgeDelay cmCdf5sVar
+                                -- -- Wait until we have at least 45 samples before we start providing
+                                -- -- cdf estimates.
+                               in if Pq.size slotMap' >= 45
+                                    then pure cm {
+                                         cmCdf1sVar  = cdf1sVar'
+                                       , cmCdf3sVar  = cdf3sVar'
+                                       , cmCdf5sVar  = cdf5sVar'
+                                       , cmDelay     = realToFrac forgeDelay
+                                       , cmBlockSize = blockSize
+                                       , cmTraceIt   = True
+                                       , cmSlotMap   = slotMap'}
+                                   else pure cm {
+                                        cmCdf1sVar  = cdf1sVar'
+                                      , cmCdf3sVar  = cdf3sVar'
+                                      , cmCdf5sVar  = cdf5sVar'
+                                      , cmTraceIt   = False
+                                      , cmSlotMap   = slotMap'}
+
+
+calculateBlockFetchClientMetrics cm _lc _ = pure cm
+
+-- -- | CdfCounter tracks the number of time a value below 'limit' has been seen.
+-- newtype CdfCounter (limit :: Nat) = CdfCounter Int64
+--
+-- -- | Estimates the CDF for a specific limit 'l' by counting the number of times
+-- -- a value 'v' is below the limit.
+-- cdfCounter :: forall a l.
+--                ( Num a, Ord a
+--                , KnownNat l)
+--             => a -> Int -> Int64 -> STM.TVar (CdfCounter l) -> STM Double
+-- cdfCounter v !size !step tCdf= do
+--     when (v < lim) $
+--         STM.modifyTVar' tCdf (\(CdfCounter c) -> CdfCounter $ c + step)
+--
+--     (CdfCounter cdf) <- STM.readTVar tCdf
+--     return $! (fromIntegral cdf / fromIntegral size)
+--
+--   where
+--     lim :: a
+--     lim = fromInteger $ natVal (Proxy :: Proxy l)
+--
+--
+-- -- Add an observation to the CdfCounter.
+-- incCdfCounter :: Ord a => Num a => KnownNat l => a -> Int -> STM.TVar (CdfCounter l) -> STM Double
+-- incCdfCounter v size = cdfCounter v size 1
+--
+-- -- Remove an observation from the CdfCounter.
+-- decCdfCounter :: Ord a => Num a => KnownNat l => a -> Int -> STM.TVar (CdfCounter l) -> STM Double
+-- decCdfCounter v size = cdfCounter v size (-1)
+--
+--
+-- -- Track the fraction of times forgeDelay was above 1s, 3s, and 5s.
+-- -- Only the first sample per slot number is counted.
+-- cdf135Counters
+--   :: Integral a
+--   => STM.TVar (IntPSQ a NominalDiffTime)
+--   -> STM.TVar (CdfCounter 1)
+--   -> STM.TVar (CdfCounter 3)
+--   -> STM.TVar (CdfCounter 5)
+--   -> a
+--   -> NominalDiffTime
+--   -> STM (Bool, Double, Double, Double)
+-- cdf135Counters slotMapVar cdf1sVar cdf3sVar cdf5sVar slotNo forgeDelay = do
+--   slotMap <- STM.readTVar slotMapVar
+--   if Pq.null slotMap && forgeDelay > 20
+--      then return (False, 0, 0, 0) -- During startup wait until we are in sync
+--      else case Pq.lookup (fromIntegral slotNo) slotMap of
+--        Nothing -> do
+--          let slotMap' = Pq.insert (fromIntegral slotNo) slotNo forgeDelay slotMap
+--          if Pq.size slotMap' > 1080 -- TODO k/2, should come from config file
+--             then
+--               case Pq.minView slotMap' of
+--                    Nothing -> return (False, 0, 0, 0) -- Err. We just inserted an element!
+--                    Just (_, minSlotNo, minDelay, slotMap'') ->
+--                      if minSlotNo == slotNo
+--                         then return (False, 0, 0, 0) -- Nothing to do
+--                         else do
+--                           decCdfs minDelay (Pq.size slotMap'')
+--                           (cdf1s, cdf3s, cdf5s) <- incCdfs forgeDelay (Pq.size slotMap'')
+--                           STM.writeTVar slotMapVar slotMap''
+--                           return (True, cdf1s, cdf3s, cdf5s)
+--             else do
+--               (cdf1s, cdf3s, cdf5s) <- incCdfs forgeDelay (Pq.size slotMap')
+--               STM.writeTVar slotMapVar slotMap'
+--               -- Wait until we have at least 45 samples before we start providing
+--               -- cdf estimates.
+--               if Pq.size slotMap >= 45
+--                  then return (True, cdf1s, cdf3s, cdf5s)
+--                  else return (True, -1, -1, -1)
+--
+--        Just _ -> return (False, 0, 0, 0) -- dupe, we only track the first
+--
+--   where
+--     incCdfs :: NominalDiffTime -> Int -> STM (Double, Double, Double)
+--     incCdfs delay size = do
+--       cdf1s <- incCdfCounter delay size cdf1sVar
+--       cdf3s <- incCdfCounter delay size cdf3sVar
+--       cdf5s <- incCdfCounter delay size cdf5sVar
+--       return (cdf1s, cdf3s, cdf5s)
+--
+--     decCdfs :: NominalDiffTime -> Int -> STM ()
+--     decCdfs delay size =
+--       decCdfCounter delay size cdf1sVar
+--        >> decCdfCounter delay size cdf3sVar
+--        >> decCdfCounter delay size cdf5sVar
+--        >> return ()
+--
+-- traceBlockFetchClientMetrics
+--   :: forall blk remotePeer.
+--      ( )
+--   => Maybe EKGDirect
+--   -> STM.TVar (IntPSQ Word64 NominalDiffTime)
+--   -> STM.TVar (CdfCounter 1)
+--   -> STM.TVar (CdfCounter 3)
+--   -> STM.TVar (CdfCounter 5)
+--   -> Tracer IO (TraceLabelPeer remotePeer (TraceFetchClientState (Header blk)))
+--   -> Tracer IO (TraceLabelPeer remotePeer (TraceFetchClientState (Header blk)))
+-- traceBlockFetchClientMetrics Nothing _ _ _ _ tracer = tracer
+-- traceBlockFetchClientMetrics (Just ekgDirect) slotMapVar cdf1sVar cdf3sVar cdf5sVar tracer = Tracer bfTracer
+--
+--   where
+--     bfTracer :: TraceLabelPeer remotePeer (TraceFetchClientState (Header blk)) -> IO ()
+--     bfTracer e@(TraceLabelPeer _ (CompletedBlockFetch p _ _ _ delay blockSize)) = do
+--       traceWith tracer e
+--       case pointSlot p of
+--         Origin -> return () -- Nothing to do.
+--         At slotNo -> do
+--           (fresh, cdf1s, cdf3s, cdf5s) <- atomically $
+--               cdf135Counters slotMapVar cdf1sVar cdf3sVar cdf5sVar (slotMapKey slotNo) delay
+--
+--           when fresh $ do
+--             -- TODO: Revisit ekg counter access once there is a faster way.
+--             sendEKGDirectDouble ekgDirect "cardano.node.metrics.blockfetchclient.blockdelay.s"
+--                 $ realToFrac delay
+--             sendEKGDirectInt ekgDirect "cardano.node.metrics.blockfetchclient.blocksize"
+--                blockSize
+--             when (cdf1s >= 0) $
+--               sendEKGDirectDouble ekgDirect
+--                 "cardano.node.metrics.blockfetchclient.blockdelay.cdfOne"
+--                 cdf1s
+--
+--             when (cdf3s >= 0) $
+--               sendEKGDirectDouble ekgDirect
+--                 "cardano.node.metrics.blockfetchclient.blockdelay.cdfThree"
+--                 cdf3s
+--
+--             when (cdf5s >= 0) $
+--               sendEKGDirectDouble ekgDirect
+--                 "cardano.node.metrics.blockfetchclient.blockdelay.cdfFive"
+--                 cdf5s
+--             when (delay > 5) $
+--               sendEKGDirectCounter ekgDirect "cardano.node.metrics.blockfetchclient.lateblocks"
+--
+--     bfTracer e =
+--       traceWith tracer e
+--
+--     slotMapKey :: SlotNo -> Word64
+--     slotMapKey (SlotNo s) = s
+
+  -- foldMTraceM
+  --   :: forall a acc m . (MonadUnliftIO m)
+  --   => (acc -> LoggingContext -> a -> m acc)
+  --   -> acc
+  --   -> Trace m (Folding a acc)
+  --   -> m (Trace m a)
+
+
+-- -- | CdfCounter tracks the number of time a value below 'limit' has been seen.
+-- newtype CdfCounter (limit :: Nat) = CdfCounter Int64
+--
+-- -- | Estimates the CDF for a specific limit 'l' by counting the number of times
+-- -- a value 'v' is below the limit.
+-- cdfCounter :: forall a l.
+--                ( Num a, Ord a
+--                , KnownNat l)
+--             => a -> Int -> Int64 -> STM.TVar (CdfCounter l) -> STM Double
+-- cdfCounter v !size !step tCdf= do
+--     when (v < lim) $
+--         STM.modifyTVar' tCdf (\(CdfCounter c) -> CdfCounter $ c + step)
+--
+--     (CdfCounter cdf) <- STM.readTVar tCdf
+--     return $! (fromIntegral cdf / fromIntegral size)
+--
+--   where
+--     lim :: a
+--     lim = fromInteger $ natVal (Proxy :: Proxy l)
+--
+--
+-- -- Add an observation to the CdfCounter.
+-- incCdfCounter :: Ord a => Num a => KnownNat l => a -> Int -> STM.TVar (CdfCounter l) -> STM Double
+-- incCdfCounter v size = cdfCounter v size 1
+--
+-- -- Remove an observation from the CdfCounter.
+-- decCdfCounter :: Ord a => Num a => KnownNat l => a -> Int -> STM.TVar (CdfCounter l) -> STM Double
+-- decCdfCounter v size = cdfCounter v size (-1)
+--
+--
+-- -- Track the fraction of times forgeDelay was above 1s, 3s, and 5s.
+-- -- Only the first sample per slot number is counted.
+-- cdf135Counters
+--   :: Integral a
+--   => STM.TVar (IntPSQ a NominalDiffTime)
+--   -> STM.TVar (CdfCounter 1)
+--   -> STM.TVar (CdfCounter 3)
+--   -> STM.TVar (CdfCounter 5)
+--   -> a
+--   -> NominalDiffTime
+--   -> STM (Bool, Double, Double, Double)
+-- cdf135Counters slotMapVar cdf1sVar cdf3sVar cdf5sVar slotNo forgeDelay = do
+--   slotMap <- STM.readTVar slotMapVar
+--   if Pq.null slotMap && forgeDelay > 20
+--      then return (False, 0, 0, 0) -- During startup wait until we are in sync
+--      else case Pq.lookup (fromIntegral slotNo) slotMap of
+--        Nothing -> do
+--          let slotMap' = Pq.insert (fromIntegral slotNo) slotNo forgeDelay slotMap
+--          if Pq.size slotMap' > 1080 -- TODO k/2, should come from config file
+--             then
+--               case Pq.minView slotMap' of
+--                    Nothing -> return (False, 0, 0, 0) -- Err. We just inserted an element!
+--                    Just (_, minSlotNo, minDelay, slotMap'') ->
+--                      if minSlotNo == slotNo
+--                         then return (False, 0, 0, 0) -- Nothing to do
+--                         else do
+--                           decCdfs minDelay (Pq.size slotMap'')
+--                           (cdf1s, cdf3s, cdf5s) <- incCdfs forgeDelay (Pq.size slotMap'')
+--                           STM.writeTVar slotMapVar slotMap''
+--                           return (True, cdf1s, cdf3s, cdf5s)
+--             else do
+--               (cdf1s, cdf3s, cdf5s) <- incCdfs forgeDelay (Pq.size slotMap')
+--               STM.writeTVar slotMapVar slotMap'
+--               -- Wait until we have at least 45 samples before we start providing
+--               -- cdf estimates.
+--               if Pq.size slotMap >= 45
+--                  then return (True, cdf1s, cdf3s, cdf5s)
+--                  else return (True, -1, -1, -1)
+--
+--        Just _ -> return (False, 0, 0, 0) -- dupe, we only track the first
+--
+--   where
+--     incCdfs :: NominalDiffTime -> Int -> STM (Double, Double, Double)
+--     incCdfs delay size = do
+--       cdf1s <- incCdfCounter delay size cdf1sVar
+--       cdf3s <- incCdfCounter delay size cdf3sVar
+--       cdf5s <- incCdfCounter delay size cdf5sVar
+--       return (cdf1s, cdf3s, cdf5s)
+--
+--     decCdfs :: NominalDiffTime -> Int -> STM ()
+--     decCdfs delay size =
+--       decCdfCounter delay size cdf1sVar
+--        >> decCdfCounter delay size cdf3sVar
+--        >> decCdfCounter delay size cdf5sVar
+--        >> return ()
+--
+
 
 severityBlockFetchClient ::
      BlockFetch.TraceLabelPeer peer (BlockFetch.TraceFetchClientState header)
