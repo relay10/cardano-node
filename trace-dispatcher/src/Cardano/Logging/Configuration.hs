@@ -399,8 +399,8 @@ parseRepresentation bs = transform (decodeEither' bs)
           tc''''
           (traceOptionForwarder cr)
           (traceOptionNodeName cr)
-          (traceOptionPeerFreqency cr)
-          (traceOptionResourceFreqency cr)
+          (traceOptionPeerFrequency cr)
+          (traceOptionResourceFrequency cr)
 
 data TraceOptionSeverity = TraceOptionSeverity {
       nsS      :: Text
@@ -475,8 +475,8 @@ data ConfigRepresentation = ConfigRepresentation {
   , traceOptionLimiter          :: [TraceOptionLimiter]
   , traceOptionForwarder        :: TraceOptionForwarder
   , traceOptionNodeName         :: Maybe Text
-  , traceOptionPeerFreqency     :: Maybe Int
-  , traceOptionResourceFreqency :: Maybe Int
+  , traceOptionPeerFrequency     :: Maybe Int
+  , traceOptionResourceFrequency :: Maybe Int
   }
   deriving (Eq, Ord, Show)
 
@@ -488,5 +488,5 @@ instance AE.FromJSON ConfigRepresentation where
                            <*> obj .: "TraceOptionLimiter"
                            <*> obj .: "TraceOptionForwarder"
                            <*> obj .:? "TraceOptionNodeName"
-                           <*> obj .:? "TraceOptionPeerFreqency"
-                           <*> obj .:? "TraceOptionResourceFreqency"
+                           <*> obj .:? "TraceOptionPeerFrequency"
+                           <*> obj .:? "TraceOptionResourceFrequency"
