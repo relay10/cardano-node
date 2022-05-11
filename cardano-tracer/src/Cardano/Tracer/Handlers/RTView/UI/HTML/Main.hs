@@ -27,6 +27,7 @@ import           Cardano.Tracer.Handlers.RTView.UI.JS.ChartJS
 import           Cardano.Tracer.Handlers.RTView.UI.Charts
 import           Cardano.Tracer.Handlers.RTView.UI.Theme
 import           Cardano.Tracer.Handlers.RTView.UI.Utils
+import           Cardano.Tracer.Handlers.RTView.Update.KES
 import           Cardano.Tracer.Handlers.RTView.Update.Nodes
 import           Cardano.Tracer.Handlers.RTView.Update.NodeState
 import           Cardano.Tracer.Handlers.RTView.Update.Peers
@@ -127,8 +128,9 @@ mkMainPage connectedNodes displayedElements acceptedMetrics savedTO
   UI.start uiNodesTimer
 
   uiPeersTimer <- UI.timer # set UI.interval 3000
-  on UI.tick uiPeersTimer . const $
+  on UI.tick uiPeersTimer . const $ do
     updateNodesPeers window peers savedTO
+    updateKESInfo window acceptedMetrics nodesEraSettings
   UI.start uiPeersTimer
 
   uiNodeStateTimer <- UI.timer # set UI.interval 5000
