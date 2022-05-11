@@ -178,6 +178,11 @@ mkPageBody window networkConfig connected
                                                                     <> " It can be outdated because of node's out of sync!")
                                          ]
                               ]
+                          , UI.tr ## "node-sync-row" #+
+                              [ UI.td #+ [ image "rt-view-overview-icon" refreshSVG
+                                         , string "Sync"
+                                         ]
+                              ]
                           , UI.tr ## "node-system-start-time-row" #+
                               [ UI.td #+ [ image "rt-view-overview-icon" systemStartSVG
                                          , string "Blockchain start"

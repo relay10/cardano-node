@@ -28,6 +28,7 @@ import           Cardano.Tracer.Handlers.RTView.UI.Charts
 import           Cardano.Tracer.Handlers.RTView.UI.Theme
 import           Cardano.Tracer.Handlers.RTView.UI.Utils
 import           Cardano.Tracer.Handlers.RTView.Update.Nodes
+import           Cardano.Tracer.Handlers.RTView.Update.NodeState
 import           Cardano.Tracer.Handlers.RTView.Update.Peers
 import           Cardano.Tracer.Handlers.RTView.Update.Reload
 import           Cardano.Tracer.Types
@@ -104,6 +105,12 @@ mkMainPage connectedNodes displayedElements acceptedMetrics savedTO
       datasetIndices
     liftIO $ pageWasNotReload reloadFlag
 
+  -- Uptime is a real-time clock, so update it every second.
+  uiUptimeTimer <- UI.timer # set UI.interval 1000
+  on UI.tick uiUptimeTimer . const $
+    updateNodesUptime connectedNodes displayedElements
+  UI.start uiUptimeTimer
+
   uiNodesTimer <- UI.timer # set UI.interval 1500
   on UI.tick uiNodesTimer . const $
     updateNodesUI
@@ -124,16 +131,16 @@ mkMainPage connectedNodes displayedElements acceptedMetrics savedTO
     updateNodesPeers window peers savedTO
   UI.start uiPeersTimer
 
-  -- Uptime is a real-time clock, so update it every second.
-  uiUptimeTimer <- UI.timer # set UI.interval 1000
-  on UI.tick uiUptimeTimer . const $
-    updateNodesUptime connectedNodes displayedElements
-  UI.start uiUptimeTimer
+  uiNodeStateTimer <- UI.timer # set UI.interval 5000
+  on UI.tick uiNodeStateTimer . const $
+    askNSetNodeState window connectedNodes dpRequestors displayedElements
+  UI.start uiNodeStateTimer
 
   on UI.disconnect window . const $ do
     UI.stop uiNodesTimer
     UI.stop uiUptimeTimer
     UI.stop uiPeersTimer
+    UI.stop uiNodeStateTimer
     liftIO $ pageWasReload reloadFlag
 
   void $ UI.element pageBody

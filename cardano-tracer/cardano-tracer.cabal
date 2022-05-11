@@ -79,6 +79,7 @@ library
                        Cardano.Tracer.Handlers.RTView.Update.Historical
                        Cardano.Tracer.Handlers.RTView.Update.Leadership
                        Cardano.Tracer.Handlers.RTView.Update.NodeInfo
+                       Cardano.Tracer.Handlers.RTView.Update.NodeState
                        Cardano.Tracer.Handlers.RTView.Update.Nodes
                        Cardano.Tracer.Handlers.RTView.Update.Peers
                        Cardano.Tracer.Handlers.RTView.Update.Reload

@@ -71,6 +71,9 @@ addNodeColumn window loggingConfig (NodeId anId) = do
                               # set dataTooltip "End date of this epoch"
                       , UI.span ## (id' <> "__node-epoch-end") # set text "—"
                       ]
+  addNodeCell "sync" [ UI.span ## (id' <> "__node-sync-progress")
+                               # set text "—"
+                     ]
   addNodeCell "system-start-time" [ UI.span ## (id' <> "__node-system-start-time")
                                             # set text "—"
                                   ]
