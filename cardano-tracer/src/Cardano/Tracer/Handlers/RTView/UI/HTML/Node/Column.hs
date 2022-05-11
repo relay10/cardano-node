@@ -95,7 +95,7 @@ addNodeColumn window loggingConfig (NodeId anId) = do
   addNodeCell "peers" [ UI.div #. "buttons has-addons" #+
                           [ UI.button ## (id' <> "__node-peers-num")
                                       #. "button is-static"
-                                      # set text "Num: —"
+                                      # set text "—"
                           , element peersDetailsButton
                           ]
                       , element peersTable
