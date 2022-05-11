@@ -18,12 +18,13 @@ import           Control.Monad (forM_, unless, when)
 import           Control.Monad.Extra (whenJust)
 import           Data.List.NonEmpty (NonEmpty)
 import qualified Data.Map.Strict as M
-import           Data.Maybe (catMaybes)
+import           Data.Maybe (fromMaybe, catMaybes)
 import           Data.Set (Set, (\\))
 import qualified Data.Set as S
 import qualified Data.Text as T
+import           Data.Text.Read
 import           Data.Time.Calendar
-import           Data.Time.Clock (UTCTime (..), addUTCTime, diffUTCTime)
+import           Data.Time.Clock
 import           Data.Time.Clock.System
 import           Data.Time.Format (defaultTimeLocale, formatTime)
 import qualified Graphics.UI.Threepenny as UI
@@ -155,8 +156,6 @@ updateNodesUptime connectedNodes displayedElements = do
                                       else uptimeFormatted
                in Just (nodeUptimeElId, T.pack uptimeWithDays)
 
-  nullTime = UTCTime (ModifiedJulianDay 0) 0
-
 setBlockReplayProgress
   :: Set NodeId
   -> DisplayedElements
@@ -168,15 +167,17 @@ setBlockReplayProgress connected _displayedElements acceptedMetrics = do
     whenJust (M.lookup nodeId allMetrics) $ \(ekgStore, _) -> do
       metrics <- liftIO $ getListOfMetrics ekgStore
       whenJust (lookup "Block replay progress (%)" metrics) $ \metricValue ->
-        updateBlockReplayProgress nodeId $ T.unpack metricValue
+        updateBlockReplayProgress nodeId metricValue
  where
-  updateBlockReplayProgress (NodeId anId) valueS =
-    whenJust (readMaybe valueS) $ \(progressPct :: Double) -> do
-      let nodeBlockReplayElId = anId <> "__node-block-replay"
-          progressPctS = T.pack $ show progressPct
-      if ("100" `T.isInfixOf` progressPctS)
-        then setTextAndClasses nodeBlockReplayElId "100&nbsp;%" "rt-view-percent-done"
-        else setTextValue nodeBlockReplayElId $ progressPctS <> "&nbsp;%"
+  updateBlockReplayProgress (NodeId anId) mValue =
+    case double mValue of
+      Left _ -> return ()
+      Right (progressPct, _) -> do
+        let nodeBlockReplayElId = anId <> "__node-block-replay"
+            progressPctS = T.pack $ show progressPct
+        if ("100" `T.isInfixOf` progressPctS)
+          then setTextAndClasses nodeBlockReplayElId "100&nbsp;%" "rt-view-percent-done"
+          else setTextValue nodeBlockReplayElId $ progressPctS <> "&nbsp;%"
 
 setChunkValidationProgress
   :: Set NodeId
@@ -265,16 +266,29 @@ setEraEpochInfo connected displayed acceptedMetrics nodesEraSettings = do
       setDisplayedValue nodeId displayed (anId <> "__node-era") $ nesEra settings
       whenJust (M.lookup nodeId allMetrics) $ \(ekgStore, _) -> do
         metrics <- liftIO $ getListOfMetrics ekgStore
-        whenJust (lookup "cardano.node.epoch" metrics) $ \mValue ->
-          updateEpochInfo settings nodeId mValue
+        let epoch       = fromMaybe "" $ lookup "cardano.node.epoch"       metrics
+            slotInEpoch = fromMaybe "" $ lookup "cardano.node.slotInEpoch" metrics
+        updateEpochInfo settings nodeId epoch slotInEpoch
  where
-  updateEpochInfo nodeEraSettings nodeId@(NodeId anId) mValue = do
-    setDisplayedValue nodeId displayed (anId <> "__node-epoch-num") mValue
-    whenJust (readMaybe $ T.unpack mValue) $ \(epochNum :: Int) ->
-      whenJust (getEndOfCurrentEpoch nodeEraSettings epochNum) $ \end ->
-        setTextValue (anId <> "__node-epoch-end") $ formatT end
-
-  formatT = T.pack . formatTime defaultTimeLocale "%D %T"
+  updateEpochInfo settings nodeId@(NodeId anId) epochS slotInEpochS =
+    unless (T.null epochS || T.null slotInEpochS) $ do
+      let epochNum = readInt epochS 0
+          _slotInEpoch = readInt slotInEpochS 0
+      setDisplayedValue nodeId displayed (anId <> "__node-epoch-num") epochS
+      case getEndOfCurrentEpoch settings epochNum of
+        Nothing -> return ()
+        Just (_start, end) -> do
+          setTextValue (anId <> "__node-epoch-end") $
+                       T.pack $ formatTime defaultTimeLocale "%D %T" end
+          {-
+          let elapsedSecondsFromEpochStart = nesSlotLengthInS settings * slotInEpoch
+              diffFromEndToStart = end `diffUTCTime` start
+              elapsed = secondsToNominalDiffTime (fromIntegral elapsedSecondsFromEpochStart)
+              diffFromNowToEnd = diffFromEndToStart - elapsed
+              timeLeft = diffFromNowToEnd `addUTCTime` nullTime
+              timeLeftF = T.pack $ formatTime defaultTimeLocale "%d:%H:%M:%S" timeLeft
+          setTextValue (anId <> "__node-epoch-end") timeLeftF
+          -}
 
   getEndOfCurrentEpoch NodeEraSettings{nesEra, nesSlotLengthInS, nesEpochLength} currentEpoch =
     case lookup nesEra epochsInfo of
@@ -283,6 +297,9 @@ setEraEpochInfo connected displayed acceptedMetrics nodesEraSettings = do
         let elapsedEpochsInEra = currentEpoch - firstEpochInEra
             epochLengthInS = nesSlotLengthInS * nesEpochLength
             secondsFromEpochStartToEpoch = epochLengthInS * elapsedEpochsInEra
-            dateOfEpochStart = epochStartDate + fromIntegral secondsFromEpochStartToEpoch
+            !dateOfEpochStart = epochStartDate + fromIntegral secondsFromEpochStartToEpoch
             !dateOfEpochEnd = dateOfEpochStart + fromIntegral epochLengthInS
-        in Just $ s2utc dateOfEpochEnd
+        in Just (s2utc dateOfEpochStart, s2utc dateOfEpochEnd)
+
+nullTime :: UTCTime
+nullTime = UTCTime (ModifiedJulianDay 0) 0
