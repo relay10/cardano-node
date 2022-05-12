@@ -256,7 +256,7 @@ mkPageBody window networkConfig connected
                                          , string "EKG metrics"
                                          , image "has-tooltip-multiline has-tooltip-right rt-view-what-icon" whatSVG
                                                  # set dataTooltip ("All EKG metrics forwarded by this node, "
-                                                                    <> "as they are (no sorting, no preparing)")
+                                                                    <> "as they are (no preparing)")
                                          ]
                               ]
                           ]

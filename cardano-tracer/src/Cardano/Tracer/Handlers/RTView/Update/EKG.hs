@@ -1,6 +1,4 @@
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE ScopedTypeVariables #-}
 
 module Cardano.Tracer.Handlers.RTView.Update.EKG
   ( updateEKGMetrics
@@ -8,8 +6,9 @@ module Cardano.Tracer.Handlers.RTView.Update.EKG
 
 import           Control.Concurrent.STM.TVar (readTVarIO)
 import           Control.Monad (forM_, unless)
+import           Data.List (partition, sort)
 import qualified Data.Map.Strict as M
-import           Data.Text (intercalate)
+import           Data.Text (intercalate, isPrefixOf)
 import           Graphics.UI.Threepenny.Core
 
 import           Cardano.Tracer.Handlers.Metrics.Utils
@@ -24,6 +23,14 @@ updateEKGMetrics acceptedMetrics = do
     metrics <- liftIO $ getListOfMetrics ekgStore
     unless (null metrics) $ do
       setTextValue (anId <> "__node-ekg-metrics-num") (showT $ length metrics)
-      let (mNames, mValues) = unzip metrics
-      setTextValue (anId <> "__node-ekg-metrics-names")  (intercalate "<br>" mNames)
-      setTextValue (anId <> "__node-ekg-metrics-values") (intercalate "<br>" mValues)
+      let sortedMetrics = sort metrics
+          (rtsGCPredefinedMetrics, otherMetrics) = partition rtsGCPredefined sortedMetrics
+          (mNames,    mValues)    = unzip otherMetrics
+          (mNamesPre, mValuesPre) = unzip rtsGCPredefinedMetrics
+          allNames  = (intercalate br mNames)  <> br <> br <> (intercalate br mNamesPre)
+          allValues = (intercalate br mValues) <> br <> br <> (intercalate br mValuesPre)
+      setTextValue (anId <> "__node-ekg-metrics-names")  allNames
+      setTextValue (anId <> "__node-ekg-metrics-values") allValues
+ where
+  rtsGCPredefined (mName, _) = "rts.gc." `isPrefixOf` mName
+  br = "<br>"
