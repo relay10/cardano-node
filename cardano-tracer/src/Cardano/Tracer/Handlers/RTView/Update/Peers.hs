@@ -34,7 +34,7 @@ updateNodesPeers
 updateNodesPeers window displayedPeers savedTO = do
   savedTraceObjects <- liftIO $ readTVarIO savedTO
   forM_ (M.toList savedTraceObjects) $ \(nodeId, savedTOForNode) ->
-    forM_ (M.toList savedTOForNode) $ \(namespace, trObValue) ->
+    forM_ (M.toList savedTOForNode) $ \(namespace, (trObValue, _, _)) ->
       case namespace of
         "Cardano.Node.Peers" ->
           doUpdatePeers window nodeId displayedPeers trObValue

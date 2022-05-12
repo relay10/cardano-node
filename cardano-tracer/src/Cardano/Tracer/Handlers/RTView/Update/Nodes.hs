@@ -188,7 +188,7 @@ setChunkValidationProgress connected savedTO = do
   forM_ connected $ \nodeId@(NodeId anId) ->
     whenJust (M.lookup nodeId savedTraceObjects) $ \savedTOForNode -> do
       let nodeChunkValidationElId = anId <> "__node-chunk-validation"
-      forM_ (M.toList savedTOForNode) $ \(namespace, trObValue) ->
+      forM_ (M.toList savedTOForNode) $ \(namespace, (trObValue, _, _)) ->
         case namespace of
           "Cardano.Node.ChainDB.ImmDbEvent.ChunkValidation.ValidatedChunk" ->
             -- In this case we don't need to check if the value differs from displayed one,
@@ -214,7 +214,7 @@ setLedgerDBProgress connected savedTO = do
   forM_ connected $ \nodeId@(NodeId anId) ->
     whenJust (M.lookup nodeId savedTraceObjects) $ \savedTOForNode -> do
       let nodeLedgerDBUpdateElId = anId <> "__node-update-ledger-db"
-      forM_ (M.toList savedTOForNode) $ \(namespace, trObValue) ->
+      forM_ (M.toList savedTOForNode) $ \(namespace, (trObValue, _, _)) ->
         case namespace of
           "Cardano.Node.ChainDB.InitChainSelEvent.UpdateLedgerDb" ->
             -- In this case we don't need to check if the value differs from displayed one,
