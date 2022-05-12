@@ -61,6 +61,7 @@ library
                        Cardano.Tracer.Handlers.RTView.UI.CSS.Bulma
                        Cardano.Tracer.Handlers.RTView.UI.CSS.Own
                        Cardano.Tracer.Handlers.RTView.UI.HTML.Node.Column
+                       Cardano.Tracer.Handlers.RTView.UI.HTML.Node.EKG
                        Cardano.Tracer.Handlers.RTView.UI.HTML.Node.Peers
                        Cardano.Tracer.Handlers.RTView.UI.HTML.About
                        Cardano.Tracer.Handlers.RTView.UI.HTML.Body
@@ -75,6 +76,7 @@ library
                        Cardano.Tracer.Handlers.RTView.UI.Utils
                        Cardano.Tracer.Handlers.RTView.Update.Chain
                        Cardano.Tracer.Handlers.RTView.Update.Common
+                       Cardano.Tracer.Handlers.RTView.Update.EKG
                        Cardano.Tracer.Handlers.RTView.Update.Errors
                        Cardano.Tracer.Handlers.RTView.Update.Historical
                        Cardano.Tracer.Handlers.RTView.Update.KES

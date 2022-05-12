@@ -251,6 +251,14 @@ mkPageBody window networkConfig connected
                                                  # set dataTooltip "How many slots were missed by this node"
                                          ]
                               ]
+                          , UI.tr ## "node-ekg-metrics-row" #+
+                              [ UI.td #+ [ image "rt-view-overview-icon" ekgMetricsSVG
+                                         , string "EKG metrics"
+                                         , image "has-tooltip-multiline has-tooltip-right rt-view-what-icon" whatSVG
+                                                 # set dataTooltip ("All EKG metrics forwarded by this node, "
+                                                                    <> "as they are (no sorting, no preparing)")
+                                         ]
+                              ]
                           ]
                       ]
                   ]

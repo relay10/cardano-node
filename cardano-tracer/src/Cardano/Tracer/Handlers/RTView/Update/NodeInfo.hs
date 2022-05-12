@@ -31,12 +31,14 @@ askNSetNodeInfo window dpRequestors newlyConnected displayedElements =
     forM_ newlyConnected $ \nodeId@(NodeId anId) ->
       whenJustM (liftIO $ askDataPoint dpRequestors nodeId "NodeInfo") $ \ni -> do
         let nodeNameElId = anId <> "__node-name"
+            shortName = shortenName $ niName ni
 
         setTextValues
-          [ (nodeNameElId,             shortenName $ niName ni)
+          [ (nodeNameElId,             shortName)
           , (anId <> "__node-version", niVersion ni)
           , (anId <> "__node-commit",  T.take 7 $ niCommit ni)
-          , (anId <> "__node-name-for-peers", shortenName $ niName ni)
+          , (anId <> "__node-name-for-peers", shortName)
+          , (anId <> "__node-name-for-ekg-metrics", shortName)
           ]
 
         findAndSet (set UI.href $ nodeLink (niCommit ni)) window (anId <> "__node-commit")

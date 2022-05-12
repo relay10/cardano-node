@@ -15,6 +15,7 @@ import           Graphics.UI.Threepenny.Core
 import           System.FilePath ((</>))
 
 import           Cardano.Tracer.Configuration
+import           Cardano.Tracer.Handlers.RTView.UI.HTML.Node.EKG
 import           Cardano.Tracer.Handlers.RTView.UI.HTML.Node.Peers
 import           Cardano.Tracer.Handlers.RTView.UI.JS.Utils
 import           Cardano.Tracer.Handlers.RTView.UI.Img.Icons
@@ -39,6 +40,12 @@ addNodeColumn window loggingConfig (NodeId anId) = do
                                   # set UI.enabled False
                                   # set text "Details"
   on UI.click peersDetailsButton . const $ element peersTable #. "modal is-active" 
+
+  ekgMetricsWindow <- mkEKGMetricsWindow id'
+  ekgMetricsButton <- UI.button ## (id' <> "__node-ekg-metrics-button")
+                                #. "button is-info"
+                                # set text "Details"
+  on UI.click ekgMetricsButton . const $ element ekgMetricsWindow #. "modal is-active"
 
   addNodeCellH "name"    [ image "rt-view-node-chart-label has-tooltip-multiline has-tooltip-left" rectangleSVG
                                  ## (id' <> "__node-chart-label")
@@ -115,6 +122,14 @@ addNodeColumn window loggingConfig (NodeId anId) = do
   addNodeCell "missed-slots" [ UI.span ## (id' <> "__node-missed-slots")
                                        # set text "—"
                              ]
+  addNodeCell "ekg-metrics" [ UI.div #. "buttons has-addons" #+
+                                [ UI.button ## (id' <> "__node-ekg-metrics-num")
+                                            #. "button is-static"
+                                            # set text "—"
+                                , element ekgMetricsButton
+                                ]
+                            , element ekgMetricsWindow
+                            ]
  where
   addNodeCellH rowId cellContent =
     whenJustM (UI.getElementById window ("node-" <> rowId <> "-row")) $ \el ->

@@ -246,6 +246,23 @@ span[data-tooltip] {
   border-bottom-right-radius: 6px;
 }
 
+.dark .rt-view-ekg-metrics-title {
+  color: whitesmoke;
+}
+
+.dark .rt-view-ekg-metrics-head {
+  color: whitesmoke;
+  background-color: #282841;
+  border-bottom: 1px solid #555;
+}
+
+.dark .rt-view-ekg-metrics-body {
+  color: whitesmoke;
+  background-color: #131325;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
 .dark .rt-view-main-table {
   background-color: #131325;
   color: whitesmoke;
@@ -481,6 +498,23 @@ span[data-tooltip] {
 }
 
 .light .rt-view-peer-body {
+  color: #555;
+  background-color: #eaeaea;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.light .rt-view-ekg-metrics-title {
+  color: #444;
+}
+
+.light .rt-view-ekg-metrics-head {
+  color: whitesmoke;
+  background-color: whitesmoke;
+  border-bottom: 1px solid #bebebe;
+}
+
+.light .rt-view-ekg-metrics-body {
   color: #555;
   background-color: #eaeaea;
   border-bottom-left-radius: 6px;

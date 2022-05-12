@@ -27,6 +27,7 @@ import           Cardano.Tracer.Handlers.RTView.UI.JS.ChartJS
 import           Cardano.Tracer.Handlers.RTView.UI.Charts
 import           Cardano.Tracer.Handlers.RTView.UI.Theme
 import           Cardano.Tracer.Handlers.RTView.UI.Utils
+import           Cardano.Tracer.Handlers.RTView.Update.EKG
 import           Cardano.Tracer.Handlers.RTView.Update.KES
 import           Cardano.Tracer.Handlers.RTView.Update.Nodes
 import           Cardano.Tracer.Handlers.RTView.Update.NodeState
@@ -112,6 +113,11 @@ mkMainPage connectedNodes displayedElements acceptedMetrics savedTO
     updateNodesUptime connectedNodes displayedElements
   UI.start uiUptimeTimer
 
+  uiEKGTimer <- UI.timer # set UI.interval 1000
+  on UI.tick uiEKGTimer . const $
+    updateEKGMetrics acceptedMetrics
+  UI.start uiEKGTimer
+
   uiNodesTimer <- UI.timer # set UI.interval 1500
   on UI.tick uiNodesTimer . const $
     updateNodesUI
@@ -143,6 +149,7 @@ mkMainPage connectedNodes displayedElements acceptedMetrics savedTO
     UI.stop uiUptimeTimer
     UI.stop uiPeersTimer
     UI.stop uiNodeStateTimer
+    UI.stop uiEKGTimer
     liftIO $ pageWasReload reloadFlag
 
   void $ UI.element pageBody
