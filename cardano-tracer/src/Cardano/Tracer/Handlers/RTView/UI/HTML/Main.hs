@@ -136,7 +136,7 @@ mkMainPage connectedNodes displayedElements acceptedMetrics savedTO
   uiPeersTimer <- UI.timer # set UI.interval 3000
   on UI.tick uiPeersTimer . const $ do
     updateNodesPeers window peers savedTO
-    updateKESInfo window acceptedMetrics nodesEraSettings
+    updateKESInfo window acceptedMetrics nodesEraSettings displayedElements
   UI.start uiPeersTimer
 
   uiNodeStateTimer <- UI.timer # set UI.interval 5000

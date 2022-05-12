@@ -251,6 +251,31 @@ mkPageBody window networkConfig connected
                                                  # set dataTooltip "How many slots were missed by this node"
                                          ]
                               ]
+                          , UI.tr ## "node-current-kes-period-row" #+
+                              [ UI.td #+ [ image "rt-view-overview-icon" certificateSVG
+                                         , string "KES current"
+                                         ]
+                              ]
+                          , UI.tr ## "node-op-cert-expiry-kes-period-row" #+
+                              [ UI.td #+ [ image "rt-view-overview-icon" certificateSVG
+                                         , string "KES Expiry"
+                                         ]
+                              ]
+                          , UI.tr ## "node-remaining-kes-periods-row" #+
+                              [ UI.td #+ [ image "rt-view-overview-icon" certificateSVG
+                                         , string "Remainig KES"
+                                         ]
+                              ]
+                          , UI.tr ## "node-op-cert-start-kes-period-row" #+
+                              [ UI.td #+ [ image "rt-view-overview-icon" certificateSVG
+                                         , string "Op Cert Start KES"
+                                         ]
+                              ]
+                          , UI.tr ## "node-days-until-op-cert-renew-row" #+
+                              [ UI.td #+ [ image "rt-view-overview-icon" endSVG
+                                         , string "Days until Op Cert renew"
+                                         ]
+                              ]
                           , UI.tr ## "node-ekg-metrics-row" #+
                               [ UI.td #+ [ image "rt-view-overview-icon" ekgMetricsSVG
                                          , string "EKG metrics"

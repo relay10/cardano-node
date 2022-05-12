@@ -300,6 +300,3 @@ setEraEpochInfo connected displayed acceptedMetrics nodesEraSettings = do
             !dateOfEpochStart = epochStartDate + fromIntegral secondsFromEpochStartToEpoch
             !dateOfEpochEnd = dateOfEpochStart + fromIntegral epochLengthInS
         in Just (s2utc dateOfEpochStart, s2utc dateOfEpochEnd)
-
-nullTime :: UTCTime
-nullTime = UTCTime (ModifiedJulianDay 0) 0

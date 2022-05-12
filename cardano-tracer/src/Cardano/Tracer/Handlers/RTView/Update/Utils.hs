@@ -8,6 +8,7 @@ module Cardano.Tracer.Handlers.RTView.Update.Utils
   , s2utc
   , showT
   , readInt
+  , nullTime
   ) where
 
 import           Control.Concurrent.STM.TVar (readTVarIO)
@@ -16,7 +17,8 @@ import           Data.Functor ((<&>))
 import qualified Data.Map.Strict as M
 import           Data.Text (Text, pack)
 import           Data.Text.Read (decimal)
-import           Data.Time.Clock (UTCTime)
+import           Data.Time.Calendar
+import           Data.Time.Clock (UTCTime (..))
 import           Data.Time.Clock.POSIX
 import           Data.Word (Word64)
 
@@ -66,3 +68,6 @@ readInt t defInt =
   case decimal t of
     Left _ -> defInt
     Right (i, _) -> i
+
+nullTime :: UTCTime
+nullTime = UTCTime (ModifiedJulianDay 0) 0

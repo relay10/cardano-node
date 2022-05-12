@@ -120,6 +120,21 @@ addNodeColumn window loggingConfig (NodeId anId) = do
   addNodeCell "missed-slots" [ UI.span ## (id' <> "__node-missed-slots")
                                        # set text "—"
                              ]
+  addNodeCell "current-kes-period" [ UI.span ## (id' <> "__node-current-kes-period")
+                                             # set text "—"
+                                   ]
+  addNodeCell "op-cert-expiry-kes-period" [ UI.span ## (id' <> "__node-op-cert-expiry-kes-period")
+                                                    # set text "—"
+                                          ]
+  addNodeCell "remaining-kes-periods" [ UI.span ## (id' <> "__node-remaining-kes-periods")
+                                                # set text "—"
+                                      ]
+  addNodeCell "op-cert-start-kes-period" [ UI.span ## (id' <> "__node-op-cert-start-kes-period")
+                                                   # set text "—"
+                                         ]
+  addNodeCell "days-until-op-cert-renew" [ UI.span ## (id' <> "__node-days-until-op-cert-renew")
+                                                   # set text "—"
+                                         ]
   addNodeCell "ekg-metrics" [ UI.div #. "buttons has-addons" #+
                                 [ UI.button ## (id' <> "__node-ekg-metrics-num")
                                             #. "button is-static"
