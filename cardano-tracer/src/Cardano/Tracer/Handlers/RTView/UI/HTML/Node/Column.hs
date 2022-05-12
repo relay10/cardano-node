@@ -19,7 +19,6 @@ import           Cardano.Tracer.Handlers.RTView.UI.HTML.Node.EKG
 import           Cardano.Tracer.Handlers.RTView.UI.HTML.Node.Peers
 import           Cardano.Tracer.Handlers.RTView.UI.JS.Utils
 import           Cardano.Tracer.Handlers.RTView.UI.Img.Icons
-import           Cardano.Tracer.Handlers.RTView.UI.Theme
 import           Cardano.Tracer.Handlers.RTView.UI.Utils
 import           Cardano.Tracer.Types
 
@@ -31,15 +30,14 @@ addNodeColumn
   -> UI ()
 addNodeColumn window loggingConfig (NodeId anId) = do
   let id' = unpack anId
-  itIsDarkTheme <- isCurrentThemeDark
-  ls <- logsSettings loggingConfig id' itIsDarkTheme
+  ls <- logsSettings loggingConfig id'
 
   peersTable <- mkPeersTable id'
   peersDetailsButton <- UI.button ## (id' <> "__node-peers-details-button")
                                   #. "button is-info"
                                   # set UI.enabled False
                                   # set text "Details"
-  on UI.click peersDetailsButton . const $ element peersTable #. "modal is-active" 
+  on UI.click peersDetailsButton . const $ element peersTable #. "modal is-active"
 
   ekgMetricsWindow <- mkEKGMetricsWindow id'
   ekgMetricsButton <- UI.button ## (id' <> "__node-ekg-metrics-button")
@@ -146,52 +144,59 @@ addNodeColumn window loggingConfig (NodeId anId) = do
 logsSettings
   :: NonEmpty LoggingParams
   -> String
-  -> Bool
   -> UI [UI Element]
-logsSettings loggingConfig anId itIsDarkTheme =
+logsSettings loggingConfig anId =
   forM (NE.toList loggingConfig) $ \(LoggingParams root mode format) ->
     case mode of
       FileMode -> do
-        let logsPathClasses =
-              if itIsDarkTheme
-                then "tag is-info is-light is-rounded mr-3 has-tooltip-multiline has-tooltip-top rt-view-logs-path"
-                else "tag is-info is-rounded mr-3 has-tooltip-multiline has-tooltip-top rt-view-logs-path"
-            logsFormatClasses =
-              if itIsDarkTheme
-                then "tag is-warning is-light is-rounded ml-3 has-tooltip-multiline has-tooltip-top rt-view-logs-format"
-                else "tag is-warning is-rounded ml-3 has-tooltip-multiline has-tooltip-top rt-view-logs-format"
         let pathToSubdir = root </> anId
-        copyPath <- image "has-tooltip-multiline has-tooltip-top rt-view-copy-icon" copySVG
-                          # set dataTooltip "Click to copy the path to a directory with logs from this node"
+
+        copyPath <- UI.button #. "button is-info"
+                               #+ [image "rt-view-copy-icon" copySVG]
         on UI.click copyPath . const $
           copyTextToClipboard pathToSubdir
+
         return $
           UI.p #+
-            [ UI.span #. logsPathClasses
-                      # set dataTooltip (pathToSubdir
-                                         <> " is the path to a directory with logs from this node")
-                      # set text (shortenPath pathToSubdir)
-            , element copyPath
-            , UI.span #. logsFormatClasses
-                      # set dataTooltip "The format log files are written in"
-                      # set text (if format == ForHuman then "LOG" else "JSON")
+            [ UI.div #. "field has-addons" #+
+                [ UI.p #. "control" #+
+                    [ UI.button #. "button is-static"
+                                # set text (if format == ForHuman then "LOG" else "JSON")
+                    ]
+                , UI.p #. "control" #+
+                    [ UI.input #. "input rt-view-logs-input"
+                               # set UI.type_ "text"
+                               # set (UI.attr "readonly") "readonly"
+                               # set UI.value pathToSubdir
+                    ]
+                , UI.p #. "control" #+
+                    [ element copyPath
+                    ]
+                ]
             ]
       JournalMode -> do
-        copyId <- image "has-tooltip-multiline has-tooltip-top rt-view-copy-icon" copySVG
-                        # set dataTooltip "Click to copy the syslog identifier of this node"
+        copyId <- UI.button #. "button is-info"
+                               #+ [image "rt-view-copy-icon" copySVG]
         on UI.click copyId . const $
           copyTextToClipboard anId
+
         return $
           UI.p #+
-            [ UI.span #. ("tag is-info is-light is-rounded mr-3"
-                          <> " has-tooltip-multiline has-tooltip-top")
-                      # set dataTooltip (anId <> " is the syslog identifier for this node")
-                      # set text (shortenPath anId)
-            , element copyId
-            , UI.span #. ("tag is-warning is-light is-rounded ml-3 "
-                          <> "has-tooltip-multiline has-tooltip-top")
-                      # set dataTooltip "Logs from this node are written in systemd's journal"
-                      # set text "JRNL"
+            [ UI.div #. "field has-addons" #+
+                [ UI.p #. "control" #+
+                    [ UI.button #. "button is-static"
+                                # set text "JRNL"
+                    ]
+                , UI.p #. "control" #+
+                    [ UI.input #. "input rt-view-logs-input"
+                               # set UI.type_ "text"
+                               # set (UI.attr "readonly") "readonly"
+                               # set UI.value anId
+                    ]
+                , UI.p #. "control" #+
+                    [ element copyId
+                    ]
+                ]
             ]
 
 -- | The node was disconnected, so its column should be deleted.

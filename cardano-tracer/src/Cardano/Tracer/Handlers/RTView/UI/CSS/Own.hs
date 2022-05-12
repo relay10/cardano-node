@@ -91,6 +91,10 @@ span[data-tooltip] {
   }
 }
 
+.rt-view-logs-input {
+  max-width: 150px;
+}
+
 /* Dark Theme */
 
 .dark {
