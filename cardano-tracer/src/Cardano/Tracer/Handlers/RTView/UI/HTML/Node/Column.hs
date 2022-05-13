@@ -16,6 +16,7 @@ import           System.FilePath ((</>))
 
 import           Cardano.Tracer.Configuration
 import           Cardano.Tracer.Handlers.RTView.UI.HTML.Node.EKG
+import           Cardano.Tracer.Handlers.RTView.UI.HTML.Node.Errors
 import           Cardano.Tracer.Handlers.RTView.UI.HTML.Node.Peers
 import           Cardano.Tracer.Handlers.RTView.UI.JS.Utils
 import           Cardano.Tracer.Handlers.RTView.UI.Img.Icons
@@ -38,6 +39,13 @@ addNodeColumn window loggingConfig (NodeId anId) = do
                                   # set UI.enabled False
                                   # set text "Details"
   on UI.click peersDetailsButton . const $ element peersTable #. "modal is-active"
+
+  errorsTable <- mkErrorsTable id'
+  errorsDetailsButton <- UI.button ## (id' <> "__node-errors-details-button")
+                                   #. "button is-danger"
+                                   # set UI.enabled False
+                                   # set text "Details"
+  on UI.click errorsDetailsButton . const $ element errorsTable #. "modal is-active"
 
   ekgMetricsWindow <- mkEKGMetricsWindow id'
   ekgMetricsButton <- UI.button ## (id' <> "__node-ekg-metrics-button")
@@ -108,6 +116,14 @@ addNodeColumn window loggingConfig (NodeId anId) = do
                           ]
                       , element peersTable
                       ]
+  addNodeCell "errors" [ UI.div #. "buttons has-addons" #+
+                           [ UI.button ## (id' <> "__node-errors-num")
+                                       #. "button is-static"
+                                       # set text "—"
+                           , element errorsDetailsButton
+                           ]
+                       , element errorsTable
+                       ]
   addNodeCell "leadership" [ UI.span ## (id' <> "__node-leadership")
                                      # set text "—"
                            ]

@@ -15,11 +15,13 @@ import qualified Graphics.UI.Threepenny as UI
 import           Cardano.Tracer.Configuration
 import           Cardano.Tracer.Handlers.RTView.State.Common
 import           Cardano.Tracer.Handlers.RTView.State.Displayed
+import           Cardano.Tracer.Handlers.RTView.State.Errors
 import           Cardano.Tracer.Handlers.RTView.State.Historical
 import           Cardano.Tracer.Handlers.RTView.State.Last
 import           Cardano.Tracer.Handlers.RTView.State.TraceObjects
 import           Cardano.Tracer.Handlers.RTView.UI.HTML.Main
 import           Cardano.Tracer.Handlers.RTView.Update.Common
+import           Cardano.Tracer.Handlers.RTView.Update.Errors
 import           Cardano.Tracer.Handlers.RTView.Update.Historical
 import           Cardano.Tracer.Types
 
@@ -56,6 +58,7 @@ runRTView TracerConfig{logging, network, hasRTView}
     chainHistory <- initBlockchainHistory
     txHistory <- initTransactionsHistory
     eraSettings <- initNodesEraSettings
+    errors <- initErrors
 
     void . sequenceConcurrently $
       [ UI.startGUI (config host port) $
@@ -72,6 +75,7 @@ runRTView TracerConfig{logging, network, hasRTView}
             resourcesHistory
             chainHistory
             txHistory
+            errors
       , runHistoricalUpdater
           savedTO
           acceptedMetrics
@@ -82,6 +86,10 @@ runRTView TracerConfig{logging, network, hasRTView}
       , runCommonUpdater
           connectedNodes
           eraSettings
+          savedTO
+      , runErrorsUpdater
+          connectedNodes
+          errors
           savedTO
       ]
  where

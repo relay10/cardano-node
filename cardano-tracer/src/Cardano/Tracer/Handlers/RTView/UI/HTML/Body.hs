@@ -223,6 +223,11 @@ mkPageBody window networkConfig connected
                                          , string "Peers"
                                          ]
                               ]
+                          , UI.tr ## "node-errors-row" #+
+                              [ UI.td #+ [ image "rt-view-overview-icon" errorsSVG
+                                         , string "Errors"
+                                         ]
+                              ]
                           , UI.tr ## "node-leadership-row" #+
                               [ UI.td #+ [ image "rt-view-overview-icon" leaderSVG
                                          , string "Leadership"

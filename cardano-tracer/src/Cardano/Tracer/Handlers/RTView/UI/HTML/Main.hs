@@ -4,18 +4,18 @@ module Cardano.Tracer.Handlers.RTView.UI.HTML.Main
   ( mkMainPage
   ) where
 
-import qualified Graphics.UI.Threepenny as UI
-import           Graphics.UI.Threepenny.Core
-
 import           Control.Concurrent.STM.TVar (readTVarIO)
 import           Control.Monad (void)
 import           Control.Monad.Extra (whenM)
 import           Data.List.NonEmpty (NonEmpty)
+import qualified Graphics.UI.Threepenny as UI
+import           Graphics.UI.Threepenny.Core
 import           System.Time.Extra (sleep)
 
 import           Cardano.Tracer.Configuration
 import           Cardano.Tracer.Handlers.RTView.State.Common
 import           Cardano.Tracer.Handlers.RTView.State.Displayed
+import           Cardano.Tracer.Handlers.RTView.State.Errors
 import           Cardano.Tracer.Handlers.RTView.State.Historical
 import           Cardano.Tracer.Handlers.RTView.State.Peers
 import           Cardano.Tracer.Handlers.RTView.State.TraceObjects
@@ -28,6 +28,7 @@ import           Cardano.Tracer.Handlers.RTView.UI.Charts
 import           Cardano.Tracer.Handlers.RTView.UI.Theme
 import           Cardano.Tracer.Handlers.RTView.UI.Utils
 import           Cardano.Tracer.Handlers.RTView.Update.EKG
+import           Cardano.Tracer.Handlers.RTView.Update.Errors
 import           Cardano.Tracer.Handlers.RTView.Update.KES
 import           Cardano.Tracer.Handlers.RTView.Update.Nodes
 import           Cardano.Tracer.Handlers.RTView.Update.NodeState
@@ -48,11 +49,12 @@ mkMainPage
   -> ResourcesHistory
   -> BlockchainHistory
   -> TransactionsHistory
+  -> Errors
   -> UI.Window
   -> UI ()
 mkMainPage connectedNodes displayedElements acceptedMetrics savedTO
            nodesEraSettings dpRequestors reloadFlag loggingConfig networkConfig
-           resourcesHistory chainHistory txHistory window = do
+           resourcesHistory chainHistory txHistory nodesErrors window = do
   void $ return window # set UI.title pageTitle
   void $ UI.getHead window #+
     [ UI.link # set UI.rel "icon"
@@ -144,12 +146,18 @@ mkMainPage connectedNodes displayedElements acceptedMetrics savedTO
     askNSetNodeState window connectedNodes dpRequestors displayedElements
   UI.start uiNodeStateTimer
 
+  uiErrorsTimer <- UI.timer # set UI.interval 3000
+  on UI.tick uiErrorsTimer . const $
+    updateNodesErrors window connectedNodes nodesErrors
+  UI.start uiErrorsTimer
+
   on UI.disconnect window . const $ do
     UI.stop uiNodesTimer
     UI.stop uiUptimeTimer
     UI.stop uiPeersTimer
     UI.stop uiNodeStateTimer
     UI.stop uiEKGTimer
+    UI.stop uiErrorsTimer
     liftIO $ pageWasReload reloadFlag
 
   void $ UI.element pageBody

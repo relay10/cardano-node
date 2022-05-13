@@ -77,6 +77,10 @@ span[data-tooltip] {
   width: 45%;
 }
 
+.rt-view-errors-modal {
+  width: 65%;
+}
+
 .rt-view-ekg-metrics-modal {
   width: 50%;
 }
@@ -85,10 +89,26 @@ span[data-tooltip] {
   .rt-view-peer-modal {
     width: 60%;
   }
+
+  .rt-view-errors-modal {
+    width: 70%;
+  }
+
+  .rt-view-ekg-metrics-modal {
+    width: 60%;
+  }
 }
 
 @media only screen and (max-width: 1024px) {
   .rt-view-peer-modal {
+    width: 70%;
+  }
+
+  .rt-view-errors-modal {
+    width: 75%;
+  }
+
+  .rt-view-ekg-metrics-modal {
     width: 70%;
   }
 }
@@ -97,21 +117,11 @@ span[data-tooltip] {
   .rt-view-peer-modal {
     width: 80%;
   }
-}
 
-@media only screen and (max-width: 1216px) {
-  .rt-view-ekg-metrics-modal {
-    width: 60%;
+  .rt-view-errors-modal {
+    width: 85%;
   }
-}
 
-@media only screen and (max-width: 1024px) {
-  .rt-view-ekg-metrics-modal {
-    width: 70%;
-  }
-}
-
-@media only screen and (max-width: 769px) {
   .rt-view-ekg-metrics-modal {
     width: 80%;
   }
@@ -189,6 +199,12 @@ span[data-tooltip] {
 .dark .rt-view-copy-icon svg {
   width: 20px;
   color: whitesmoke;
+  cursor: pointer;
+}
+
+.dark .rt-view-delete-icon svg {
+  width: 20px;
+  color: red;
   cursor: pointer;
 }
 
@@ -271,6 +287,23 @@ span[data-tooltip] {
   border-bottom-right-radius: 6px;
 }
 
+.dark .rt-view-errors-title {
+  color: whitesmoke;
+}
+
+.dark .rt-view-errors-head {
+  color: whitesmoke;
+  background-color: #282841;
+  border-bottom: 1px solid #555;
+}
+
+.dark .rt-view-errors-body {
+  color: whitesmoke;
+  background-color: #131325;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
 .dark .rt-view-ekg-metrics-title {
   color: whitesmoke;
 }
@@ -317,6 +350,23 @@ span[data-tooltip] {
 }
 
 .dark .rt-view-peer-table th {
+  color: whitesmoke;
+  border-bottom: 2px solid #888;
+  vertical-align: middle;
+}
+
+.dark .rt-view-errors-table {
+  background-color: #131325;
+  color: whitesmoke;
+}
+
+.dark .rt-view-errors-table td {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: 0px solid #444;
+}
+
+.dark .rt-view-errors-table th {
   color: whitesmoke;
   border-bottom: 2px solid #888;
   vertical-align: middle;
@@ -445,6 +495,12 @@ span[data-tooltip] {
   cursor: pointer;
 }
 
+.light .rt-view-delete-icon svg {
+  width: 20px;
+  color: red;
+  cursor: pointer;
+}
+
 .light .rt-view-logs-icon svg {
   width: 23px;
   padding-top: 2px;
@@ -524,6 +580,23 @@ span[data-tooltip] {
   border-bottom-right-radius: 6px;
 }
 
+.light .rt-view-errors-title {
+  color: #444;
+}
+
+.light .rt-view-errors-head {
+  color: whitesmoke;
+  background-color: whitesmoke;
+  border-bottom: 1px solid #bebebe;
+}
+
+.light .rt-view-errors-body {
+  color: #555;
+  background-color: #eaeaea;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
 .light .rt-view-ekg-metrics-title {
   color: #444;
 }
@@ -570,6 +643,23 @@ span[data-tooltip] {
 }
 
 .light .rt-view-peer-table th {
+  color: #444;
+  border-bottom: 2px solid #cfcfcf;
+  vertical-align: middle;
+}
+
+.light .rt-view-errors-table {
+  background-color: #eaeaea;
+  color: #444;
+}
+
+.light .rt-view-errors-table td {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: 0px solid #444;
+}
+
+.light .rt-view-errors-table th {
   color: #444;
   border-bottom: 2px solid #cfcfcf;
   vertical-align: middle;

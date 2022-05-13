@@ -39,6 +39,7 @@ askNSetNodeInfo window dpRequestors newlyConnected displayedElements =
           , (anId <> "__node-commit",  T.take 7 $ niCommit ni)
           , (anId <> "__node-name-for-peers", shortName)
           , (anId <> "__node-name-for-ekg-metrics", shortName)
+          , (anId <> "__node-name-for-errors", shortName)
           ]
 
         findAndSet (set UI.href $ nodeLink (niCommit ni)) window (anId <> "__node-commit")
