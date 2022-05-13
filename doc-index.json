@@ -3468,7 +3468,7 @@
     "link": "lib/Cardano-Api-Block.html#v:getBlockHeader"
   },
   {
-    "display_html": "<span class=\"keyword\">data</span> <a href=\"#t:BlockInMode\">BlockInMode</a> mode <span class=\"keyword\">where</span><ul class=\"subs\"><li><a href=\"#v:BlockInMode\">BlockInMode</a> &#8759; <a href=\"Cardano-Api-Block.html#t:Block\" title=\"Cardano.Api.Block\">Block</a> era &#8594; <a href=\"Cardano-Api-Modes.html#t:EraInMode\" title=\"Cardano.Api.Modes\">EraInMode</a> era mode &#8594; <a href=\"Cardano-Api-Block.html#t:BlockInMode\" title=\"Cardano.Api.Block\">BlockInMode</a> mode</li></ul>",
+    "display_html": "<span class=\"keyword\">data</span> <a href=\"#t:BlockInMode\">BlockInMode</a> mode <span class=\"keyword\">where</span><ul class=\"subs\"><li><a href=\"#v:BlockInMode\">BlockInMode</a> &#8759; <a href=\"Cardano-Api-Eras.html#t:IsCardanoEra\" title=\"Cardano.Api.Eras\">IsCardanoEra</a> era &#8658; <a href=\"Cardano-Api-Block.html#t:Block\" title=\"Cardano.Api.Block\">Block</a> era &#8594; <a href=\"Cardano-Api-Modes.html#t:EraInMode\" title=\"Cardano.Api.Modes\">EraInMode</a> era mode &#8594; <a href=\"Cardano-Api-Block.html#t:BlockInMode\" title=\"Cardano.Api.Block\">BlockInMode</a> mode</li></ul>",
     "name": "BlockInMode BlockInMode",
     "module": "Cardano.Api.Block",
     "link": "lib/Cardano-Api-Block.html#t:BlockInMode"
@@ -3900,7 +3900,7 @@
     "link": "lib/Cardano-Api-IPC.html#t:ChainSyncClientPipelined"
   },
   {
-    "display_html": "<span class=\"keyword\">data</span> <a href=\"#t:BlockInMode\">BlockInMode</a> mode <span class=\"keyword\">where</span><ul class=\"subs\"><li><a href=\"#v:BlockInMode\">BlockInMode</a> &#8759; <a href=\"Cardano-Api-Block.html#t:Block\" title=\"Cardano.Api.Block\">Block</a> era &#8594; <a href=\"Cardano-Api-Modes.html#t:EraInMode\" title=\"Cardano.Api.Modes\">EraInMode</a> era mode &#8594; <a href=\"Cardano-Api-IPC.html#t:BlockInMode\" title=\"Cardano.Api.IPC\">BlockInMode</a> mode</li></ul>",
+    "display_html": "<span class=\"keyword\">data</span> <a href=\"#t:BlockInMode\">BlockInMode</a> mode <span class=\"keyword\">where</span><ul class=\"subs\"><li><a href=\"#v:BlockInMode\">BlockInMode</a> &#8759; <a href=\"Cardano-Api-Eras.html#t:IsCardanoEra\" title=\"Cardano.Api.Eras\">IsCardanoEra</a> era &#8658; <a href=\"Cardano-Api-Block.html#t:Block\" title=\"Cardano.Api.Block\">Block</a> era &#8594; <a href=\"Cardano-Api-Modes.html#t:EraInMode\" title=\"Cardano.Api.Modes\">EraInMode</a> era mode &#8594; <a href=\"Cardano-Api-IPC.html#t:BlockInMode\" title=\"Cardano.Api.IPC\">BlockInMode</a> mode</li></ul>",
     "name": "BlockInMode BlockInMode",
     "module": "Cardano.Api.IPC",
     "link": "lib/Cardano-Api-IPC.html#t:BlockInMode"
@@ -6504,7 +6504,7 @@
     "link": "lib/Cardano-Api.html#t:ChainSyncClientPipelined"
   },
   {
-    "display_html": "<span class=\"keyword\">data</span> <a href=\"#t:BlockInMode\">BlockInMode</a> mode <span class=\"keyword\">where</span><ul class=\"subs\"><li><a href=\"#v:BlockInMode\">BlockInMode</a> &#8759; <a href=\"Cardano-Api.html#t:Block\" title=\"Cardano.Api\">Block</a> era &#8594; <a href=\"Cardano-Api.html#t:EraInMode\" title=\"Cardano.Api\">EraInMode</a> era mode &#8594; <a href=\"Cardano-Api.html#t:BlockInMode\" title=\"Cardano.Api\">BlockInMode</a> mode</li></ul>",
+    "display_html": "<span class=\"keyword\">data</span> <a href=\"#t:BlockInMode\">BlockInMode</a> mode <span class=\"keyword\">where</span><ul class=\"subs\"><li><a href=\"#v:BlockInMode\">BlockInMode</a> &#8759; <a href=\"Cardano-Api.html#t:IsCardanoEra\" title=\"Cardano.Api\">IsCardanoEra</a> era &#8658; <a href=\"Cardano-Api.html#t:Block\" title=\"Cardano.Api\">Block</a> era &#8594; <a href=\"Cardano-Api.html#t:EraInMode\" title=\"Cardano.Api\">EraInMode</a> era mode &#8594; <a href=\"Cardano-Api.html#t:BlockInMode\" title=\"Cardano.Api\">BlockInMode</a> mode</li></ul>",
     "name": "BlockInMode BlockInMode",
     "module": "Cardano.Api",
     "link": "lib/Cardano-Api.html#t:BlockInMode"
