@@ -67,6 +67,7 @@ library
                        Cardano.Tracer.Handlers.RTView.UI.HTML.About
                        Cardano.Tracer.Handlers.RTView.UI.HTML.Body
                        Cardano.Tracer.Handlers.RTView.UI.HTML.Main
+                       Cardano.Tracer.Handlers.RTView.UI.HTML.NoNodes
                        Cardano.Tracer.Handlers.RTView.UI.JS.ChartJS
                        Cardano.Tracer.Handlers.RTView.UI.JS.Charts
                        Cardano.Tracer.Handlers.RTView.UI.JS.Utils

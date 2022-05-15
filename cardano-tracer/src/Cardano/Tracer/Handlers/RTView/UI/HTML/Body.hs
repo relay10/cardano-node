@@ -7,8 +7,6 @@ module Cardano.Tracer.Handlers.RTView.UI.HTML.Body
 
 import           Control.Monad (void, unless, when)
 import           Control.Monad.Extra (whenM, whenJustM)
-import           Data.List (intercalate)
-import qualified Data.List.NonEmpty as NE
 import           Data.Text (Text)
 import qualified Graphics.UI.Threepenny as UI
 import           Graphics.UI.Threepenny.Core
@@ -18,6 +16,7 @@ import           Cardano.Tracer.Configuration
 import           Cardano.Tracer.Handlers.RTView.State.Historical
 import           Cardano.Tracer.Handlers.RTView.UI.Img.Icons
 import           Cardano.Tracer.Handlers.RTView.UI.HTML.About
+import           Cardano.Tracer.Handlers.RTView.UI.HTML.NoNodes
 import qualified Cardano.Tracer.Handlers.RTView.UI.JS.Charts as Chart
 import           Cardano.Tracer.Handlers.RTView.UI.Charts
 import           Cardano.Tracer.Handlers.RTView.UI.Theme
@@ -136,7 +135,7 @@ mkPageBody window networkConfig connected
                   [ string "There are no connected nodes. Yet."
                   ]
               ]
-          , noNodesInfo networkConfig
+          , mkNoNodesInfo networkConfig
           , UI.mkElement "section" #. "section" #+
               [ UI.div ## "main-table-container"
                        #. "table-container"
@@ -324,8 +323,8 @@ mkPageBody window networkConfig connected
                       , element aboutToLeadChart
                       ]
                   , UI.div #. "column" #+
-                      [ element cannotForgeChart     
-                      , element nodeIsNotLeaderChart  
+                      [ element cannotForgeChart
+                      , element nodeIsNotLeaderChart
                       , element couldNotForgeChart
                       , element notAdoptedChart
                       ]
@@ -366,7 +365,7 @@ mkPageBody window networkConfig connected
               ]
           , footer
           ]
-      ] 
+      ]
 
   Chart.prepareChartsJS
 
@@ -517,67 +516,6 @@ footer =
             ]
         ]
     ]
-
--- | If the user doesn't see connected nodes - possible reason of it is
---   misconfiguration of 'cardano-tracer' and/or 'cardano-node'.
---   So we have to show basic explanation.
-noNodesInfo :: Network -> UI Element
-noNodesInfo networkConfig = do
-  closeIt <- UI.button #. "delete"
-  infoNote <-
-    UI.div ## "no-nodes-info"
-           #. "container notification is-link rt-view-no-nodes-info" #+
-      [ element closeIt
-      , UI.p #. "mb-4 is-size-4" # set text "«Hey, where are my nodes?»"
-      , UI.p #+
-          [ string "If you are sure that your nodes should already be connected, "
-          , string "please check your configuration files."
-          ]
-      , UI.p #+
-          [ string "For more details, please read "
-          , UI.anchor # set UI.href "https://github.com/input-output-hk/cardano-node/blob/master/cardano-tracer/docs/cardano-tracer.md#configuration"
-                      # set text "our documentation"
-                      # set UI.target "_blank"
-          , image "rt-view-href-icon" externalLinkWhiteSVG
-          , string "."
-          ]
-      , UI.p #. "mt-4" #+
-          [ UI.span # set UI.html ("Currently, your <code>cardano-tracer</code> is configured as a " <> mode)
-          , UI.span # set UI.html (", so it " <> whatItDoes)
-          ]
-      , UI.p #. "mt-4" #+
-          [ UI.span # set UI.html ("Correspondingly, your " <> nodeConfigNotice)
-          ]
-      ]
-  on UI.click closeIt . const $ element infoNote # hideIt
-  return infoNote
- where
-  (mode, whatItDoes, nodeConfigNotice) =
-    case networkConfig of
-      AcceptAt (LocalSocket p) ->
-        ( "server"
-        , "accepts connections from your nodes via the local socket <code>" <> p <> "</code>."
-        , "nodes should be configured as clients: make sure <code>TraceOptionForwarder.mode</code>"
-          <> " is <code>Initiator</code>, also check <code>TraceOptionForwarder.address</code> path."
-        )
-      ConnectTo addrs ->
-        let manySocks = NE.length addrs > 1 in
-        ( "client"
-        , "connects to your "
-          <> (if manySocks then "nodes" else "node")
-          <> " via the local "
-          <> (if manySocks
-               then
-                 let socks = map (\(LocalSocket p) -> "<code>" <> p <> "</code>") $ NE.toList addrs
-                 in "sockets " <> intercalate ", " socks <> "."
-               else
-                 "socket <code>" <> let LocalSocket p = NE.head addrs in p <> "</code>.")
-        , (if manySocks then "nodes" else "node")
-          <> " should be configured as "
-          <> (if manySocks then "servers" else "a server")
-          <> ": make sure <code>TraceOptionForwarder.mode</code>"
-          <> " is <code>Responder</code>, also check <code>TraceOptionForwarder.address</code> path."
-        )
 
 mkChart
   :: UI.Window

@@ -42,6 +42,18 @@ code {
   border-radius: 3px;
 }
 
+pre {
+  color: #1d359f;
+  font-size: .875em;
+  overflow-x: auto;
+  padding: 8px 8px 8px 8px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  white-space: pre;
+  word-wrap: normal;
+  border-radius: 3px;
+}
+
 span[data-tooltip] {
   border-bottom: none !important;
 }
@@ -55,7 +67,7 @@ span[data-tooltip] {
 }
 
 .rt-view-no-nodes-info {
-  max-width: 600px !important;
+  max-width: 800px !important;
   margin-top: 50px;
 }
 
