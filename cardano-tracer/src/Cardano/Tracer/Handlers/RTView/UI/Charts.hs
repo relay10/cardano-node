@@ -143,8 +143,9 @@ getLatestDisplayedTS
   -> NodeId
   -> DataName
   -> UI (Maybe POSIXTime)
-getLatestDisplayedTS tss nodeId dataName = liftIO $
-  (M.lookup nodeId <$> readTVarIO tss) >>= \case
+getLatestDisplayedTS tss nodeId dataName = liftIO $ do
+  tss' <- readTVarIO tss
+  case M.lookup nodeId tss' of
     Nothing         -> return Nothing
     Just tssForNode -> return $ M.lookup dataName tssForNode
 
@@ -267,8 +268,9 @@ saveChartsSettings window = do
     pathToChartsConfig <- getPathToChartsConfig
     encodeFile pathToChartsConfig settings
  where
-  getOptionValue selectId =
-    (readMaybe <$> findAndGetValue window (pack selectId)) >>= \case
+   getOptionValue selectId = do
+    v <- findAndGetValue window (pack selectId)
+    case readMaybe v of
       Just (valueInS :: Int) -> return valueInS
       Nothing -> return 0
 

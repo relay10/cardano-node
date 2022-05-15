@@ -21,7 +21,7 @@ body {
   height: 100%;
 }
 
-#wrapper {
+.wrapper {
   min-height: 100%;
   width: 100%;
   position: relative;
@@ -140,7 +140,7 @@ span[data-tooltip] {
   min-height: 100%;
 }
 
-.dark #wrapper {
+.dark .wrapper {
   background-color: #131325;
 }
 
@@ -433,7 +433,7 @@ span[data-tooltip] {
   min-height: 100%;
 }
 
-.light #wrapper {
+.light .wrapper {
   background-color: #f5f5f5;
 }
 

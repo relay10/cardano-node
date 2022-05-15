@@ -43,7 +43,7 @@ askNSetNodeState _window connectedNodes dpRequestors displayed = do
  where
   setSyncProgress nodeId@(NodeId anId) syncPct = do
     let nodeSyncProgressElId = anId <> "__node-sync-progress"
-    if (syncPct < 100.0)
+    if syncPct < 100.0
       then setDisplayedValue nodeId displayed nodeSyncProgressElId $
-             (pack $ printf "%.2f" syncPct) <> "&nbsp;%"
+             pack (printf "%.2f" syncPct) <> "&nbsp;%"
       else setTextAndClasses nodeSyncProgressElId "100&nbsp;%" "rt-view-percent-done"

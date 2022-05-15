@@ -27,8 +27,8 @@ updateEKGMetrics acceptedMetrics = do
           (rtsGCPredefinedMetrics, otherMetrics) = partition rtsGCPredefined sortedMetrics
           (mNames,    mValues)    = unzip otherMetrics
           (mNamesPre, mValuesPre) = unzip rtsGCPredefinedMetrics
-          allNames  = (intercalate br mNames)  <> br <> br <> (intercalate br mNamesPre)
-          allValues = (intercalate br mValues) <> br <> br <> (intercalate br mValuesPre)
+          allNames  = intercalate br mNames  <> br <> br <> intercalate br mNamesPre
+          allValues = intercalate br mValues <> br <> br <> intercalate br mValuesPre
       setTextValue (anId <> "__node-ekg-metrics-names")  allNames
       setTextValue (anId <> "__node-ekg-metrics-values") allValues
  where

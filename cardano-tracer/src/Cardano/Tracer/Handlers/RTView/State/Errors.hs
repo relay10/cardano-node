@@ -136,7 +136,8 @@ getErrorsHandled
   -> NodeId
   -> ([ErrorInfo] -> [ErrorInfo])
   -> IO [ErrorInfo]
-getErrorsHandled errors nodeId handler = 
-  (M.lookup nodeId <$> readTVarIO errors) >>= \case
+getErrorsHandled errors nodeId handler = do
+  errors' <- readTVarIO errors
+  case M.lookup nodeId errors' of
     Nothing -> return []
     Just errorsFromNode -> return $ handler errorsFromNode

@@ -1,4 +1,3 @@
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE NumericUnderscores #-}
 
 module Cardano.Tracer.Handlers.RTView.Update.Utils
@@ -13,7 +12,6 @@ module Cardano.Tracer.Handlers.RTView.Update.Utils
 
 import           Control.Concurrent.STM.TVar (readTVarIO)
 import           Data.Aeson (FromJSON, decode')
-import           Data.Functor ((<&>))
 import qualified Data.Map.Strict as M
 import           Data.Text (Text, pack)
 import           Data.Text.Read (decimal)
@@ -41,11 +39,13 @@ askDataPoint
   -> NodeId
   -> DataPointName
   -> IO (Maybe a)
-askDataPoint dpRequestors nodeId dpName =
-  readTVarIO dpRequestors <&> M.lookup nodeId >>= \case
+askDataPoint dpRequestors nodeId dpName = do
+  requestors <- readTVarIO dpRequestors
+  case M.lookup nodeId requestors of
     Nothing -> return Nothing
-    Just dpRequestor ->
-      askForDataPoints dpRequestor [dpName] <&> lookup dpName >>= \case
+    Just dpRequestor -> do
+      dp <- askForDataPoints dpRequestor [dpName]
+      case lookup dpName dp of
         Just (Just rawValue) -> return $ decode' rawValue
         _ -> return Nothing
 

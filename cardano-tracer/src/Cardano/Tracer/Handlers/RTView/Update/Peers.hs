@@ -1,4 +1,3 @@
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
@@ -10,7 +9,7 @@ import           Control.Concurrent.STM.TVar
 import           Control.Monad
 import           Control.Monad.Extra (whenJustM)
 import           Data.List (find)
-import           Data.Maybe (catMaybes)
+import           Data.Maybe (mapMaybe)
 import qualified Data.Map.Strict as M
 import           Data.Set ((\\))
 import qualified Data.Set as S
@@ -73,11 +72,11 @@ doUpdatePeers window nodeId@(NodeId anId) displayedPeers trObValue =
  where
   peersParts = T.splitOn "," trObValue
 
-  getConnectedPeers = S.fromList . catMaybes $
-    map (\peerPart ->
-           let peerData = T.words peerPart in
-           if length peerData == 6 then Just peerData else Nothing
-        ) peersParts
+  getConnectedPeers = S.fromList $
+    mapMaybe
+      (\peerPart -> let peerData = T.words peerPart in
+                    if length peerData == 6 then Just peerData else Nothing
+      ) peersParts
 
   getConnectedPeersAddresses = S.map head getConnectedPeers
 
@@ -129,7 +128,7 @@ doUpdatePeers window nodeId@(NodeId anId) displayedPeers trObValue =
         ]
 
   updateConnectedPeersData connectedPeers = do
-    let allPeersData = concat $ map collectDataToUpdate $ S.toList connectedPeers
+    let allPeersData = concatMap collectDataToUpdate (S.toList connectedPeers)
     -- Update values for all peers by one single FFI-call.
     setTextValues allPeersData
 

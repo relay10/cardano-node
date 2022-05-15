@@ -1,5 +1,4 @@
 {-# LANGUAGE BangPatterns #-}
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -175,7 +174,7 @@ setBlockReplayProgress connected _displayedElements acceptedMetrics = do
       Right (progressPct, _) -> do
         let nodeBlockReplayElId = anId <> "__node-block-replay"
             progressPctS = T.pack $ show progressPct
-        if ("100" `T.isInfixOf` progressPctS)
+        if "100" `T.isInfixOf` progressPctS
           then setTextAndClasses nodeBlockReplayElId "100&nbsp;%" "rt-view-percent-done"
           else setTextValue nodeBlockReplayElId $ progressPctS <> "&nbsp;%"
 
@@ -224,7 +223,7 @@ setLedgerDBProgress connected savedTO = do
             -- Example: "Pushing ledger state for block b1e6...fc5a at slot 54495204. Progress: 3.66%"
             case T.words trObValue of
               [_, _, _, _, _, _, _, _, _, _, progressPct] -> do
-                if ("100" `T.isInfixOf` progressPct)
+                if "100" `T.isInfixOf` progressPct
                   then setTextAndClasses nodeLedgerDBUpdateElId "100&nbsp;%" "rt-view-percent-done"
                   else setTextValue nodeLedgerDBUpdateElId $ T.init progressPct <> "&nbsp;%"
               _ -> return ()

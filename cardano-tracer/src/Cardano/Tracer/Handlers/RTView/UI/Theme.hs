@@ -44,9 +44,9 @@ setThemeAndSave window themeToSet = do
 
   changeThemeIcon = do
     change "theme-icon" $
-        (set html        (if toBeLight then rtViewThemeToDarkSVG else rtViewThemeToLightSVG))
-      . (set dataState   (if toBeLight then lightState else darkState))
-      . (set dataTooltip ("Switch to " <> (if toBeLight then "dark" else "light") <> " theme"))
+        set html        (if toBeLight then rtViewThemeToDarkSVG else rtViewThemeToLightSVG)
+      . set dataState   (if toBeLight then lightState else darkState)
+      . set dataTooltip ("Switch to " <> (if toBeLight then "dark" else "light") <> " theme")
 
   changeBodyClass =
     getElementsByTagName window "body" >>= \case

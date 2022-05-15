@@ -1,6 +1,3 @@
-{-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE OverloadedStrings #-}
-
 module Cardano.Tracer.Handlers.RTView.State.Peers
   ( PeerAddress
   , PeersForNode
@@ -59,8 +56,9 @@ doesPeerExist
   -> NodeId
   -> PeerAddress
   -> IO Bool
-doesPeerExist peers nodeId peerAddr =
-  (M.lookup nodeId <$> readTVarIO peers) >>= \case
+doesPeerExist peers nodeId peerAddr = do
+  peers' <- readTVarIO peers
+  case M.lookup nodeId peers' of
     Nothing -> return False
     Just peersForNode -> return $ S.member peerAddr peersForNode
 
@@ -68,7 +66,8 @@ getPeersAddresses
   :: Peers
   -> NodeId
   -> IO (Set PeerAddress)
-getPeersAddresses peers nodeId = 
-  (M.lookup nodeId <$> readTVarIO peers) >>= \case
+getPeersAddresses peers nodeId = do
+  peers' <- readTVarIO peers
+  case M.lookup nodeId peers' of
     Nothing           -> return S.empty
     Just peersForNode -> return peersForNode

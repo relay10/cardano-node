@@ -39,6 +39,6 @@ addNodeEraSettings nodesSettings nodeId settingsForIt = atomically $
         M.insert nodeId settingsForIt currentSettings
       Just savedSettings ->
         -- The settings for the same era shouldn't be changed.
-        if (nesEra savedSettings == nesEra settingsForIt)
+        if nesEra savedSettings == nesEra settingsForIt
           then currentSettings
           else M.adjust (const settingsForIt) nodeId currentSettings

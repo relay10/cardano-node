@@ -1,4 +1,3 @@
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
@@ -126,7 +125,7 @@ mkPageBody window networkConfig connected
   -- Body.
   body <-
     UI.getBody window #+
-      [ UI.div ## "wrapper" #+
+      [ UI.div #. "wrapper" #+
           [ UI.div ## "preloader" #. "pageloader is-active" #+
               [ UI.span #. "title" # set text "Just a second..."
               ]
