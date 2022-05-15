@@ -1,10 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Cardano.Tracer.Handlers.RTView.State.Common
-  ( NodeEraSettings (..)
-  , NodesEraSettings
-  , addNodeEraSettings
-  , initNodesEraSettings
+module Cardano.Tracer.Handlers.RTView.State.EraSettings
+  ( EraSettings (..)
+  , ErasSettings
+  , addEraSettings
+  , initErasSettings
   ) where
 
 import           Control.Concurrent.STM (atomically)
@@ -15,30 +15,30 @@ import           Data.Text (Text)
 
 import           Cardano.Tracer.Types (NodeId)
 
-data NodeEraSettings = NodeEraSettings
-  { nesEra             :: !Text
-  , nesSlotLengthInS   :: !Int
-  , nesEpochLength     :: !Int
-  , nesKESPeriodLength :: !Int
+data EraSettings = EraSettings
+  { esEra             :: !Text
+  , esSlotLengthInS   :: !Int
+  , esEpochLength     :: !Int
+  , esKESPeriodLength :: !Int
   } deriving (Eq, Show)
 
-type NodesEraSettings = TVar (Map NodeId NodeEraSettings)
+type ErasSettings = TVar (Map NodeId EraSettings)
 
-initNodesEraSettings :: IO NodesEraSettings
-initNodesEraSettings = newTVarIO M.empty
+initErasSettings :: IO ErasSettings
+initErasSettings = newTVarIO M.empty
 
-addNodeEraSettings
-  :: NodesEraSettings
+addEraSettings
+  :: ErasSettings
   -> NodeId
-  -> NodeEraSettings
+  -> EraSettings
   -> IO ()
-addNodeEraSettings nodesSettings nodeId settingsForIt = atomically $
+addEraSettings nodesSettings nodeId settingsForIt = atomically $
   modifyTVar' nodesSettings $ \currentSettings ->
     case M.lookup nodeId currentSettings of
       Nothing ->
         M.insert nodeId settingsForIt currentSettings
       Just savedSettings ->
         -- The settings for the same era shouldn't be changed.
-        if nesEra savedSettings == nesEra settingsForIt
+        if esEra savedSettings == esEra settingsForIt
           then currentSettings
           else M.adjust (const settingsForIt) nodeId currentSettings

@@ -50,8 +50,8 @@ library
                        Cardano.Tracer.Handlers.Metrics.Utils
 
                        Cardano.Tracer.Handlers.RTView.Run
-                       Cardano.Tracer.Handlers.RTView.State.Common
                        Cardano.Tracer.Handlers.RTView.State.Displayed
+                       Cardano.Tracer.Handlers.RTView.State.EraSettings
                        Cardano.Tracer.Handlers.RTView.State.Errors
                        Cardano.Tracer.Handlers.RTView.State.Historical
                        Cardano.Tracer.Handlers.RTView.State.Last
@@ -76,8 +76,8 @@ library
                        Cardano.Tracer.Handlers.RTView.UI.Types
                        Cardano.Tracer.Handlers.RTView.UI.Utils
                        Cardano.Tracer.Handlers.RTView.Update.Chain
-                       Cardano.Tracer.Handlers.RTView.Update.Common
                        Cardano.Tracer.Handlers.RTView.Update.EKG
+                       Cardano.Tracer.Handlers.RTView.Update.EraSettings
                        Cardano.Tracer.Handlers.RTView.Update.Errors
                        Cardano.Tracer.Handlers.RTView.Update.Historical
                        Cardano.Tracer.Handlers.RTView.Update.KES

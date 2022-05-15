@@ -1,8 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Cardano.Tracer.Handlers.RTView.Update.Common
-  ( runCommonUpdater
+module Cardano.Tracer.Handlers.RTView.Update.EraSettings
+  ( runEraSettingsUpdater
   ) where
 
 import           Control.Concurrent.STM.TVar (readTVarIO)
@@ -13,27 +13,27 @@ import           Data.Set (Set)
 import qualified Data.Text as T
 import           System.Time.Extra (sleep)
 
-import           Cardano.Tracer.Handlers.RTView.State.Common
+import           Cardano.Tracer.Handlers.RTView.State.EraSettings
 import           Cardano.Tracer.Handlers.RTView.State.TraceObjects
 import           Cardano.Tracer.Handlers.RTView.Update.Utils
 import           Cardano.Tracer.Types
 
-runCommonUpdater
+runEraSettingsUpdater
   :: ConnectedNodes
-  -> NodesEraSettings
+  -> ErasSettings
   -> SavedTraceObjects
   -> IO ()
-runCommonUpdater connectedNodes nodesSettings savedTO = forever $ do
+runEraSettingsUpdater connectedNodes settings savedTO = forever $ do
   connected <- readTVarIO connectedNodes
-  updateNodesEraSettings connected nodesSettings savedTO
+  updateErasSettings connected settings savedTO
   sleep 1.0
 
-updateNodesEraSettings
+updateErasSettings
   :: Set NodeId
-  -> NodesEraSettings
+  -> ErasSettings
   -> SavedTraceObjects
   -> IO ()
-updateNodesEraSettings connected nodesSettings savedTO = do
+updateErasSettings connected settings savedTO = do
   savedTraceObjects <- readTVarIO savedTO
   forM_ connected $ \nodeId ->
     whenJust (M.lookup nodeId savedTraceObjects) $ \savedTOForNode ->
@@ -41,11 +41,11 @@ updateNodesEraSettings connected nodesSettings savedTO = do
         -- Example: "Era Alonzo, Slot length 1s, Epoch length 432000, Slots per KESPeriod 129600"
         case T.words $ T.replace "," "" trObValue of
           [_, era, _, _, slotLen, _, _, epochLen, _, _, _, kesPeriod] ->
-            addNodeEraSettings nodesSettings nodeId $
-              NodeEraSettings
-                { nesEra             = era
-                , nesSlotLengthInS   = readInt (T.init slotLen) 0
-                , nesEpochLength     = readInt epochLen 0
-                , nesKESPeriodLength = readInt kesPeriod 0
+            addEraSettings settings nodeId $
+              EraSettings
+                { esEra             = era
+                , esSlotLengthInS   = readInt (T.init slotLen) 0
+                , esEpochLength     = readInt epochLen 0
+                , esKESPeriodLength = readInt kesPeriod 0
                 }
           _ -> return ()

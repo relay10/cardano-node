@@ -13,7 +13,7 @@ import           Graphics.UI.Threepenny.Core
 import           System.Time.Extra (sleep)
 
 import           Cardano.Tracer.Configuration
-import           Cardano.Tracer.Handlers.RTView.State.Common
+import           Cardano.Tracer.Handlers.RTView.State.EraSettings
 import           Cardano.Tracer.Handlers.RTView.State.Displayed
 import           Cardano.Tracer.Handlers.RTView.State.Errors
 import           Cardano.Tracer.Handlers.RTView.State.Historical
@@ -41,7 +41,7 @@ mkMainPage
   -> DisplayedElements
   -> AcceptedMetrics
   -> SavedTraceObjects
-  -> NodesEraSettings
+  -> ErasSettings
   -> DataPointRequestors
   -> PageReloadedFlag
   -> NonEmpty LoggingParams

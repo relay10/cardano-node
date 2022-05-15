@@ -33,7 +33,7 @@ import           Text.Read (readMaybe)
 
 import           Cardano.Tracer.Configuration
 import           Cardano.Tracer.Handlers.Metrics.Utils
-import           Cardano.Tracer.Handlers.RTView.State.Common
+import           Cardano.Tracer.Handlers.RTView.State.EraSettings
 import           Cardano.Tracer.Handlers.RTView.State.Displayed
 import           Cardano.Tracer.Handlers.RTView.State.TraceObjects
 import           Cardano.Tracer.Handlers.RTView.UI.HTML.Node.Column
@@ -50,7 +50,7 @@ updateNodesUI
   -> DisplayedElements
   -> AcceptedMetrics
   -> SavedTraceObjects
-  -> NodesEraSettings
+  -> ErasSettings
   -> DataPointRequestors
   -> NonEmpty LoggingParams
   -> Colors
@@ -255,14 +255,14 @@ setEraEpochInfo
   :: Set NodeId
   -> DisplayedElements
   -> AcceptedMetrics
-  -> NodesEraSettings
+  -> ErasSettings
   -> UI ()
 setEraEpochInfo connected displayed acceptedMetrics nodesEraSettings = do
   allSettings <- liftIO $ readTVarIO nodesEraSettings
   allMetrics <- liftIO $ readTVarIO acceptedMetrics
   forM_ connected $ \nodeId@(NodeId anId) ->
     whenJust (M.lookup nodeId allSettings) $ \settings -> do
-      setDisplayedValue nodeId displayed (anId <> "__node-era") $ nesEra settings
+      setDisplayedValue nodeId displayed (anId <> "__node-era") $ esEra settings
       whenJust (M.lookup nodeId allMetrics) $ \(ekgStore, _) -> do
         metrics <- liftIO $ getListOfMetrics ekgStore
         let epoch       = fromMaybe "" $ lookup "cardano.node.epoch"       metrics
@@ -289,12 +289,12 @@ setEraEpochInfo connected displayed acceptedMetrics nodesEraSettings = do
           setTextValue (anId <> "__node-epoch-end") timeLeftF
           -}
 
-  getEndOfCurrentEpoch NodeEraSettings{nesEra, nesSlotLengthInS, nesEpochLength} currentEpoch =
-    case lookup nesEra epochsInfo of
+  getEndOfCurrentEpoch EraSettings{esEra, esSlotLengthInS, esEpochLength} currentEpoch =
+    case lookup esEra epochsInfo of
       Nothing -> Nothing
       Just (epochStartDate, firstEpochInEra) ->
         let elapsedEpochsInEra = currentEpoch - firstEpochInEra
-            epochLengthInS = nesSlotLengthInS * nesEpochLength
+            epochLengthInS = esSlotLengthInS * esEpochLength
             secondsFromEpochStartToEpoch = epochLengthInS * elapsedEpochsInEra
             !dateOfEpochStart = epochStartDate + fromIntegral secondsFromEpochStartToEpoch
             !dateOfEpochEnd = dateOfEpochStart + fromIntegral epochLengthInS

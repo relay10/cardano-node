@@ -17,7 +17,7 @@ import           Graphics.UI.Threepenny.Core
 import           Text.Printf
 
 import           Cardano.Tracer.Handlers.Metrics.Utils
-import           Cardano.Tracer.Handlers.RTView.State.Common
+import           Cardano.Tracer.Handlers.RTView.State.EraSettings
 import           Cardano.Tracer.Handlers.RTView.State.Displayed
 import           Cardano.Tracer.Handlers.RTView.UI.Utils
 import           Cardano.Tracer.Types
@@ -25,10 +25,10 @@ import           Cardano.Tracer.Types
 updateKESInfo
   :: UI.Window
   -> AcceptedMetrics
-  -> NodesEraSettings
+  -> ErasSettings
   -> DisplayedElements
   -> UI ()
-updateKESInfo _window acceptedMetrics nodesEraSettings displayed = do
+updateKESInfo _window acceptedMetrics settings displayed = do
   allMetrics <- liftIO $ readTVarIO acceptedMetrics
   forM_ (M.toList allMetrics) $ \(nodeId@(NodeId anId), (ekgStore, _)) -> do
     metrics <- liftIO $ getListOfMetrics ekgStore
@@ -42,16 +42,16 @@ updateKESInfo _window acceptedMetrics nodesEraSettings displayed = do
           setDisplayedValue nodeId displayed (anId <> "__node-op-cert-start-kes-period") metricValue
         "cardano.node.remainingKESPeriods" -> do
           setDisplayedValue nodeId displayed (anId <> "__node-remaining-kes-periods") metricValue
-          allSettings <- liftIO $ readTVarIO nodesEraSettings
-          whenJust (M.lookup nodeId allSettings) $ \settings ->
-            setDaysUntilRenew nodeId settings metricValue
+          allSettings <- liftIO $ readTVarIO settings
+          whenJust (M.lookup nodeId allSettings) $
+            setDaysUntilRenew nodeId metricValue
         _ -> return ()
  where
-  setDaysUntilRenew nodeId@(NodeId anId) NodeEraSettings{nesKESPeriodLength, nesSlotLengthInS} metricValue = do
+  setDaysUntilRenew nodeId@(NodeId anId) metricValue EraSettings{esKESPeriodLength, esSlotLengthInS} = do
     case decimal metricValue of
       Left _ -> return ()
       Right (remainingKesPeriods :: Int, _) -> do
-        let secondsUntilRenew = remainingKesPeriods * nesKESPeriodLength * nesSlotLengthInS
+        let secondsUntilRenew = remainingKesPeriods * esKESPeriodLength * esSlotLengthInS
             daysUntilRenew :: Double
             daysUntilRenew = fromIntegral secondsUntilRenew / 3600 / 24
         setDisplayedValue nodeId displayed (anId <> "__node-days-until-op-cert-renew") $
