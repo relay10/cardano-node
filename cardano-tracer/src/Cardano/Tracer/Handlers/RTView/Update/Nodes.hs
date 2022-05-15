@@ -26,13 +26,13 @@ import           Data.Time.Calendar
 import           Data.Time.Clock
 import           Data.Time.Clock.System
 import           Data.Time.Format (defaultTimeLocale, formatTime)
+import           Data.Word (Word64)
 import qualified Graphics.UI.Threepenny as UI
 import           Graphics.UI.Threepenny.Core
 import           Text.Read (readMaybe)
 
 import           Cardano.Tracer.Configuration
 import           Cardano.Tracer.Handlers.Metrics.Utils
-import           Cardano.Tracer.Handlers.RTView.Chain
 import           Cardano.Tracer.Handlers.RTView.State.Common
 import           Cardano.Tracer.Handlers.RTView.State.Displayed
 import           Cardano.Tracer.Handlers.RTView.State.TraceObjects
@@ -299,3 +299,16 @@ setEraEpochInfo connected displayed acceptedMetrics nodesEraSettings = do
             !dateOfEpochStart = epochStartDate + fromIntegral secondsFromEpochStartToEpoch
             !dateOfEpochEnd = dateOfEpochStart + fromIntegral epochLengthInS
         in Just (s2utc dateOfEpochStart, s2utc dateOfEpochEnd)
+
+type EraName         = T.Text
+type FirstEpochInEra = Int
+type EraStartPOSIX   = Word64
+
+-- It is taken from 'cardano-ledger' wiki topic "First-Block-of-Each-Era".
+epochsInfo :: [(EraName, (EraStartPOSIX, FirstEpochInEra))]
+epochsInfo =
+  [ ("Shelley", (1596073491, 208)) -- 07/30/2020 1:44:51 AM GMT
+  , ("Allegra", (1608169491, 236)) -- 12/17/2020 1:44:51 AM GMT
+  , ("Mary",    (1614649491, 251)) -- 03/02/2021 1:44:51 AM GMT
+  , ("Alonzo",  (1634953491, 298)) -- 10/23/2021 1:44:51 AM GMT, start of new protocol.
+  ]

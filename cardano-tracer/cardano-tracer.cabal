@@ -49,7 +49,6 @@ library
                        Cardano.Tracer.Handlers.Metrics.Servers
                        Cardano.Tracer.Handlers.Metrics.Utils
 
-                       Cardano.Tracer.Handlers.RTView.Chain
                        Cardano.Tracer.Handlers.RTView.Run
                        Cardano.Tracer.Handlers.RTView.State.Common
                        Cardano.Tracer.Handlers.RTView.State.Displayed
