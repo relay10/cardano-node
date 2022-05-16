@@ -127,8 +127,14 @@ searchErrorMessages
   -> Errors
   -> UI ()
 searchErrorMessages window textToSearch nodeId@(NodeId anId) nodesErrors =
-  liftIO (getErrorsFilteredByText textToSearch nodesErrors nodeId) >>= \case 
-    [] -> return ()
+  liftIO (getErrorsFilteredByText textToSearch nodesErrors nodeId) >>= \case
+    [] -> do
+      -- There is nothing found. So we have to display an empty list of
+      -- errors to inform the user that there is no corresponding errors.
+      findByClassAndDo window (anId <> "-node-error-row") UI.delete
+      -- Reset number of currently displayed errors rows.
+      whenJustM (UI.getElementById window (T.unpack anId <> "__node-errors-tbody")) $ \el ->
+        void $ element el # set dataState "0"
     foundErrors -> do
       -- Delete displayed errors from window.
       findByClassAndDo window (anId <> "-node-error-row") UI.delete
