@@ -60,7 +60,7 @@ assumeMapCosts _proxy = stepFunction [
       ShelleyBasedEraAllegra -> 39
       ShelleyBasedEraMary    -> 39
       ShelleyBasedEraAlonzo  -> 42
-      ShelleyBasedEraBabbage -> error "42"
+      ShelleyBasedEraBabbage -> 42
 
 -- Bytestring costs are not LINEAR !!
 -- Costs are piecewise linear for payload sizes [0..23] and [24..64].
