@@ -13,7 +13,7 @@ module Cardano.Tracer.Handlers.RTView.State.Errors
   , timeAsc
   , timeDesc
   , severityAsc
-  , severityDesc 
+  , severityDesc
   , initErrors
   , deleteAllErrors
   ) where
@@ -24,6 +24,7 @@ import           Data.List (find, sortBy)
 import           Data.Map.Strict (Map)
 import qualified Data.Map.Strict as M
 import           Data.Text (Text, isInfixOf)
+import qualified Data.Text as T
 
 import           Cardano.Tracer.Handlers.RTView.State.TraceObjects
 import           Cardano.Tracer.Types (NodeId)
@@ -49,8 +50,13 @@ addError errors nodeId trObInfo = atomically $
         let errorIx = 0
         M.insert nodeId [(errorIx, trObInfo)] currentErrors
       Just errorsFromNode -> do
-        let errorIx = length errorsFromNode
-        M.adjust (const $ errorsFromNode ++ [(errorIx, trObInfo)]) nodeId currentErrors
+        -- All errors here should be unique, so check it first.
+        case find (\(_, trObInfo') -> trObInfo == trObInfo') errorsFromNode of
+          Nothing -> do
+            -- No such error, add it.
+            let errorIx = length errorsFromNode
+            M.adjust (const $ errorsFromNode ++ [(errorIx, trObInfo)]) nodeId currentErrors
+          Just _ -> currentErrors
 
 deleteAllErrors
   :: Errors
@@ -110,7 +116,9 @@ getErrorsFilteredByText
   -> NodeId
   -> IO [ErrorInfo]
 getErrorsFilteredByText textToSearch errors nodeId =
-  getErrorsHandled errors nodeId $ filter (\(_, (msg, _, _)) -> textToSearch `isInfixOf` msg)
+  if T.null textToSearch
+    then return []
+    else getErrorsHandled errors nodeId $ filter (\(_, (msg, _, _)) -> textToSearch `isInfixOf` msg)
 
 getErrorsHandled
   :: Errors

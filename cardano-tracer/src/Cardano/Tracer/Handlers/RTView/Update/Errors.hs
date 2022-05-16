@@ -1,15 +1,18 @@
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Cardano.Tracer.Handlers.RTView.Update.Errors
   ( runErrorsUpdater
   , updateNodesErrors
+  , searchErrorMessages
   ) where
 
 import           Control.Concurrent.STM.TVar
 import           Control.Monad
 import           Control.Monad.Extra (whenJust, whenJustM)
 import qualified Data.Map.Strict as M
+import           Data.Text (Text)
 import qualified Data.Text as T
 import           Data.Time.Format (defaultTimeLocale, formatTime)
 import qualified Graphics.UI.Threepenny as UI
@@ -69,15 +72,22 @@ updateNodesErrors window connectedNodes nodesErrors = do
       whenJustM (UI.getElementById window (T.unpack anId <> "__node-errors-tbody")) $ \el ->
         whenJustM (readMaybe <$> get dataState el) $ \(numberOfDisplayedRows :: Int) -> do
           let onlyNewErrors = drop numberOfDisplayedRows errorsFromNode
-          unless (null onlyNewErrors) $ do
-            -- Prepare rows for hese new errors.
-            errorRows <-
-              forM onlyNewErrors $ \(errorIx, (msg, sev, ts)) ->
-                mkErrorRow errorIx nodeId msg sev ts
-            -- Add them actually and remember their new number.
-            let newNumberOfDisplayedRows = numberOfDisplayedRows + length onlyNewErrors
-            void $ element el # set dataState (show newNumberOfDisplayedRows)
-                              #+ errorRows
+          doAddErrorRows nodeId onlyNewErrors el numberOfDisplayedRows
+
+doAddErrorRows
+  :: NodeId
+  -> [ErrorInfo]
+  -> Element
+  -> Int
+  -> UI ()
+doAddErrorRows nodeId errorsToAdd parentEl numberOfDisplayedRows = do
+  errorRows <-
+    forM errorsToAdd $ \(errorIx, (msg, sev, ts)) ->
+      mkErrorRow errorIx nodeId msg sev ts
+  -- Add them actually and remember their new number.
+  let newNumberOfDisplayedRows = numberOfDisplayedRows + length errorsToAdd
+  void $ element parentEl # set dataState (show newNumberOfDisplayedRows)
+                          #+ errorRows
  where
   mkErrorRow _errorIx (NodeId anId) msg sev ts = do
     copyErrorIcon <- image "has-tooltip-multiline has-tooltip-left rt-view-copy-icon" copySVG
@@ -85,7 +95,7 @@ updateNodesErrors window connectedNodes nodesErrors = do
     on UI.click copyErrorIcon . const $
       copyTextToClipboard $ errorToCopy ts sev msg
 
-    errorRow <-
+    return $
       UI.tr #. (T.unpack anId <> "-node-error-row") #+
         [ UI.td #+
             [ UI.span # set text (preparedTS ts)
@@ -106,11 +116,23 @@ updateNodesErrors window connectedNodes nodesErrors = do
             ]
         ]
 
-    return $ element errorRow
-
-  -- shortenMsg msg = if T.length msg > 50 then T.take 50 msg <> "..." else msg
-
   preparedTS = formatTime defaultTimeLocale "%b %e, %Y %T"
 
-  errorToCopy ts sev msg =
-    "[" <> preparedTS ts <> "] [" <> show sev <> "] [" <> T.unpack msg <> "]"
+  errorToCopy ts sev msg = "[" <> preparedTS ts <> "] [" <> show sev <> "] [" <> T.unpack msg <> "]"
+
+searchErrorMessages
+  :: UI.Window
+  -> Text
+  -> NodeId
+  -> Errors
+  -> UI ()
+searchErrorMessages window textToSearch nodeId@(NodeId anId) nodesErrors =
+  liftIO (getErrorsFilteredByText textToSearch nodesErrors nodeId) >>= \case 
+    [] -> return ()
+    foundErrors -> do
+      -- Delete displayed errors from window.
+      findByClassAndDo window (anId <> "-node-error-row") UI.delete
+      -- Do add found errors.
+      whenJustM (UI.getElementById window (T.unpack anId <> "__node-errors-tbody")) $ \el ->
+        whenJustM (readMaybe <$> get dataState el) $ \(numberOfDisplayedRows :: Int) ->
+          doAddErrorRows nodeId foundErrors el numberOfDisplayedRows

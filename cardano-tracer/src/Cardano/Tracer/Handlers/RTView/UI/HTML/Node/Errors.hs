@@ -5,15 +5,16 @@ module Cardano.Tracer.Handlers.RTView.UI.HTML.Node.Errors
   ( mkErrorsTable
   ) where
 
-import           Control.Monad (void)
+import           Control.Monad (void, when)
 import           Control.Monad.Extra (whenJustM)
-import           Data.Text (unpack)
+import           Data.Text (pack, unpack)
 import qualified Graphics.UI.Threepenny as UI
 import           Graphics.UI.Threepenny.Core
 
 import           Cardano.Tracer.Handlers.RTView.State.Errors
 import           Cardano.Tracer.Handlers.RTView.UI.Img.Icons
 import           Cardano.Tracer.Handlers.RTView.UI.Utils
+import           Cardano.Tracer.Handlers.RTView.Update.Errors
 import           Cardano.Tracer.Types
 
 mkErrorsTable
@@ -28,6 +29,21 @@ mkErrorsTable window nodeId@(NodeId anId) nodesErrors = do
                      # set dataTooltip "Click to delete all errors. This action cannot be undone!"
   on UI.click deleteAll . const $
     deleteAllErrorMessages
+
+  searchMessagesInput <- UI.input #. "input rt-view-search-messages"
+                                  # set UI.type_ "text"
+                                  # set (UI.attr "placeholder") "Search messages"
+  searchMessages <- UI.button #. "button is-info"
+                              #+ [image "rt-view-search-errors-icon" searchSVG]
+  -- If the user clicked the search button.
+  on UI.click searchMessages . const $ do
+    usersSearchText <- get value searchMessagesInput
+    searchErrorMessages window (pack usersSearchText) nodeId nodesErrors
+  -- If the user hits Enter key.
+  on UI.keyup searchMessagesInput $ \keyCode ->
+    when (keyCode == 13) $ do
+      usersSearchText <- get value searchMessagesInput
+      searchErrorMessages window (pack usersSearchText) nodeId nodesErrors
 
   errorsTable <-
     UI.div #. "modal" #+
@@ -47,10 +63,10 @@ mkErrorsTable window nodeId@(NodeId anId) nodesErrors = do
                   [ UI.table ## (id' <> "__errors-table") #. "table is-fullwidth rt-view-errors-table" #+
                       [ UI.mkElement "thead" #+
                           [ UI.tr #+
-                              [ UI.th #+
+                              [ UI.th #. "rt-view-errors-timestamp" #+
                                   [ string "Timestamp"
                                   ]
-                              , UI.th #+
+                              , UI.th #. "rt-view-errors-severity" #+
                                   [ string "Severity"
                                   ]
                               , UI.th #+
@@ -64,6 +80,16 @@ mkErrorsTable window nodeId@(NodeId anId) nodesErrors = do
                       , UI.mkElement "tbody" ## (id' <> "__node-errors-tbody")
                                              # set dataState "0"
                                              #+ []
+                      ]
+                  ]
+              ]
+          , UI.mkElement "footer" #. "modal-card-foot rt-view-errors-foot" #+
+              [ UI.div #. "field has-addons" #+
+                  [ UI.p #. "control" #+
+                      [ element searchMessagesInput
+                      ]
+                  , UI.p #. "control" #+
+                      [ element searchMessages
                       ]
                   ]
               ]

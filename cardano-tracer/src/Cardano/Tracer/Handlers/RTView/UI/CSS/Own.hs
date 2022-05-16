@@ -91,6 +91,7 @@ span[data-tooltip] {
 
 .rt-view-errors-modal {
   width: 65%;
+  min-height: 65%;
 }
 
 .rt-view-ekg-metrics-modal {
@@ -144,7 +145,15 @@ span[data-tooltip] {
 }
 
 .rt-view-error-msg-input {
-  max-width: 350px;
+  max-width: 380px;
+}
+
+.rt-view-errors-timestamp {
+  width: 30%;
+}
+
+.rt-view-errors-severity {
+  width: 16%;
 }
 
 /* Dark Theme */
@@ -227,6 +236,12 @@ span[data-tooltip] {
 .dark .rt-view-delete-errors-icon svg {
   width: 22px;
   color: red;
+  cursor: pointer;
+}
+
+.dark .rt-view-search-errors-icon svg {
+  width: 18px;
+  color: whitesmoke;
   cursor: pointer;
 }
 
@@ -324,6 +339,12 @@ span[data-tooltip] {
   background-color: #131325;
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
+}
+
+.dark .rt-view-errors-foot {
+  color: whitesmoke;
+  background-color: #282841;
+  border-top: 1px solid #555;
 }
 
 .dark .rt-view-ekg-metrics-title {
@@ -529,6 +550,12 @@ span[data-tooltip] {
   cursor: pointer;
 }
 
+.light .rt-view-search-errors-icon svg {
+  width: 18px;
+  color: #444;
+  cursor: pointer;
+}
+
 .light .rt-view-logs-icon svg {
   width: 23px;
   padding-top: 2px;
@@ -613,7 +640,7 @@ span[data-tooltip] {
 }
 
 .light .rt-view-errors-head {
-  color: whitesmoke;
+  color: #555;
   background-color: whitesmoke;
   border-bottom: 1px solid #bebebe;
 }
@@ -623,6 +650,12 @@ span[data-tooltip] {
   background-color: #eaeaea;
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
+}
+
+.light .rt-view-errors-foot {
+  color: #555;
+  background-color: whitesmoke;
+  border-top: 1px solid #bebebe;
 }
 
 .light .rt-view-ekg-metrics-title {
