@@ -12,6 +12,7 @@ import           Graphics.UI.Threepenny.Core
 
 import           Cardano.Tracer.Configuration
 import           Cardano.Tracer.Handlers.RTView.State.Displayed
+import           Cardano.Tracer.Handlers.RTView.State.Errors
 import           Cardano.Tracer.Handlers.RTView.UI.Types
 import           Cardano.Tracer.Handlers.RTView.Update.NodeInfo
 import           Cardano.Tracer.Handlers.RTView.Update.Nodes
@@ -25,13 +26,14 @@ updateUIAfterReload
   -> NonEmpty LoggingParams
   -> Colors
   -> DatasetsIndices
+  -> Errors
   -> UI ()
-updateUIAfterReload window connectedNodes displayedElements
-                    dpRequestors loggingConfig colors datasetIndices = do
+updateUIAfterReload window connectedNodes displayedElements dpRequestors
+                    loggingConfig colors datasetIndices nodesErrors = do
   -- Ok, web-page was reload (i.e. it's the first update after DOM-rendering),
   -- so displayed state should be restored immediately.
   connected <- liftIO $ readTVarIO connectedNodes  
-  addColumnsForConnected window connected loggingConfig
+  addColumnsForConnected window connected loggingConfig nodesErrors
   checkNoNodesState window connected
   askNSetNodeInfo window dpRequestors connected displayedElements
   addDatasetsForConnected window connected colors datasetIndices displayedElements

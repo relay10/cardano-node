@@ -15,6 +15,7 @@ import           Graphics.UI.Threepenny.Core
 import           System.FilePath ((</>))
 
 import           Cardano.Tracer.Configuration
+import           Cardano.Tracer.Handlers.RTView.State.Errors
 import           Cardano.Tracer.Handlers.RTView.UI.HTML.Node.EKG
 import           Cardano.Tracer.Handlers.RTView.UI.HTML.Node.Errors
 import           Cardano.Tracer.Handlers.RTView.UI.HTML.Node.Peers
@@ -27,9 +28,10 @@ import           Cardano.Tracer.Types
 addNodeColumn
   :: UI.Window
   -> NonEmpty LoggingParams
+  -> Errors
   -> NodeId
   -> UI ()
-addNodeColumn window loggingConfig (NodeId anId) = do
+addNodeColumn window loggingConfig nodesErrors nodeId@(NodeId anId) = do
   let id' = unpack anId
   ls <- logsSettings loggingConfig id'
 
@@ -40,7 +42,7 @@ addNodeColumn window loggingConfig (NodeId anId) = do
                                   # set text "Details"
   on UI.click peersDetailsButton . const $ element peersTable #. "modal is-active"
 
-  errorsTable <- mkErrorsTable id'
+  errorsTable <- mkErrorsTable window nodeId nodesErrors
   errorsDetailsButton <- UI.button ## (id' <> "__node-errors-details-button")
                                    #. "button is-danger"
                                    # set UI.enabled False

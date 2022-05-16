@@ -6,8 +6,8 @@ module Cardano.Tracer.Handlers.RTView.Update.Errors
   , updateNodesErrors
   ) where
 
-import           Control.Concurrent.STM.TVar (readTVarIO)
-import           Control.Monad (forever, forM_, unless, void, when)
+import           Control.Concurrent.STM.TVar
+import           Control.Monad
 import           Control.Monad.Extra (whenJust, whenJustM)
 import qualified Data.Map.Strict as M
 import qualified Data.Text as T
@@ -63,22 +63,23 @@ updateNodesErrors window connectedNodes nodesErrors = do
       -- Update errors number.
       setTextValue (anId <> "__node-errors-num") (showT $ length errorsFromNode)
       -- Add errors.
-      forM_ errorsFromNode $ \(errorIx, (msg, sev, ts)) ->
-        addErrorRow errorIx nodeId msg sev ts
+      errorRows <-
+        forM errorsFromNode $ \(errorIx, (msg, sev, ts)) ->
+          mkErrorRow errorIx nodeId msg sev ts
+      whenJustM (UI.getElementById window (T.unpack anId <> "__node-errors-tbody")) $ \el ->
+        void $ element el #+ errorRows
       -- Enable 'Details' button.
       findAndSet (set UI.enabled True)
                  window $ anId <> "__node-errors-details-button"
  where
-  addErrorRow errorIx nodeId@(NodeId anId) msg sev ts = do
-    copyErrorIcon <- image "has-tooltip-multiline has-tooltip-top rt-view-copy-icon" copySVG
+  mkErrorRow _errorIx (NodeId anId) msg sev ts = do
+    copyErrorIcon <- image "has-tooltip-multiline has-tooltip-left rt-view-copy-icon" copySVG
                            # set dataTooltip "Click to copy this error"
     on UI.click copyErrorIcon . const $
       copyTextToClipboard $ errorToCopy ts sev msg
 
-    deleteErrorIcon <- image "has-tooltip-multiline has-tooltip-top rt-view-delete-icon" deleteSVG
-                             # set dataTooltip "Click to delete this error"
     errorRow <-
-      UI.tr #+
+      UI.tr #. (T.unpack anId <> "-node-error-row") #+
         [ UI.td #+
             [ UI.span # set text (preparedTS ts)
             ]
@@ -86,38 +87,23 @@ updateNodesErrors window connectedNodes nodesErrors = do
             [ UI.span #. "tag is-medium is-danger" # set text (show sev)
             ]
         , UI.td #+
-            [ UI.span # set text (T.unpack $ shortenMsg msg)
+            [ UI.p #. "control" #+
+                [ UI.input #. "input rt-view-error-msg-input"
+                           # set UI.type_ "text"
+                           # set (UI.attr "readonly") "readonly"
+                           # set UI.value (T.unpack msg)
+                ]
             ]
         , UI.td #+
             [ element copyErrorIcon
-            , element deleteErrorIcon
             ]
         ]
 
-    on UI.click deleteErrorIcon . const $ do
-      UI.delete errorRow
-      liftIO $ deleteError nodesErrors nodeId errorIx
+    return $ element errorRow
 
-    whenJustM (UI.getElementById window (T.unpack anId <> "__node-errors-tbody")) $ \el ->
-      void $ element el #+
-        [ element errorRow
-        ]
-
-  shortenMsg msg = if T.length msg > 50 then T.take 50 msg <> "..." else msg
+  -- shortenMsg msg = if T.length msg > 50 then T.take 50 msg <> "..." else msg
 
   preparedTS = formatTime defaultTimeLocale "%b %e, %Y %T"
 
   errorToCopy ts sev msg =
     "[" <> preparedTS ts <> "] [" <> show sev <> "] [" <> T.unpack msg <> "]"
-
-
-  --prepareSeverity sev =
-  --  case sev of
-  --    Debug     -> "D"
-  --    Info      -> "I"
-  --    Notice    -> "N"
-  --    Warning   -> "W"
-  --    Error     -> "Er"
-  --    Critical  -> "C"
-  --    Alert     -> "A"
-  --    Emergency -> "Em"

@@ -107,6 +107,7 @@ mkMainPage connectedNodes displayedElements acceptedMetrics savedTO
       loggingConfig
       colors
       datasetIndices
+      nodesErrors
     liftIO $ pageWasNotReload reloadFlag
 
   -- Uptime is a real-time clock, so update it every second.
@@ -133,6 +134,7 @@ mkMainPage connectedNodes displayedElements acceptedMetrics savedTO
       loggingConfig
       colors
       datasetIndices
+      nodesErrors
   UI.start uiNodesTimer
 
   uiPeersTimer <- UI.timer # set UI.interval 3000
@@ -141,15 +143,15 @@ mkMainPage connectedNodes displayedElements acceptedMetrics savedTO
     updateKESInfo window acceptedMetrics nodesEraSettings displayedElements
   UI.start uiPeersTimer
 
-  uiNodeStateTimer <- UI.timer # set UI.interval 5000
-  on UI.tick uiNodeStateTimer . const $
-    askNSetNodeState window connectedNodes dpRequestors displayedElements
-  UI.start uiNodeStateTimer
-
   uiErrorsTimer <- UI.timer # set UI.interval 3000
   on UI.tick uiErrorsTimer . const $
     updateNodesErrors window connectedNodes nodesErrors
   UI.start uiErrorsTimer
+
+  uiNodeStateTimer <- UI.timer # set UI.interval 5000
+  on UI.tick uiNodeStateTimer . const $
+    askNSetNodeState window connectedNodes dpRequestors displayedElements
+  UI.start uiNodeStateTimer
 
   on UI.disconnect window . const $ do
     UI.stop uiNodesTimer

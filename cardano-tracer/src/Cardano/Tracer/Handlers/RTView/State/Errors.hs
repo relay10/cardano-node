@@ -15,13 +15,12 @@ module Cardano.Tracer.Handlers.RTView.State.Errors
   , severityAsc
   , severityDesc 
   , initErrors
-  , deleteError
   , deleteAllErrors
   ) where
 
 import           Control.Concurrent.STM (atomically)
 import           Control.Concurrent.STM.TVar
-import           Data.List (delete, find, sortBy)
+import           Data.List (find, sortBy)
 import           Data.Map.Strict (Map)
 import qualified Data.Map.Strict as M
 import           Data.Text (Text, isInfixOf)
@@ -52,24 +51,6 @@ addError errors nodeId trObInfo = atomically $
       Just errorsFromNode -> do
         let errorIx = length errorsFromNode
         M.adjust (const $ errorsFromNode ++ [(errorIx, trObInfo)]) nodeId currentErrors
-
-deleteError
-  :: Errors
-  -> NodeId
-  -> ErrorIx
-  -> IO ()
-deleteError errors nodeId errorIx = atomically $
-  modifyTVar' errors $ \currentErrors ->
-    case M.lookup nodeId currentErrors of
-      Nothing -> currentErrors
-      Just errorsFromNode ->
-        case find errorByIx errorsFromNode of
-          Nothing -> currentErrors
-          Just errorWeNeed -> do
-            let updatedErrors = delete errorWeNeed errorsFromNode
-            M.adjust (const updatedErrors) nodeId currentErrors
- where
-  errorByIx (ix, _) = ix == errorIx
 
 deleteAllErrors
   :: Errors

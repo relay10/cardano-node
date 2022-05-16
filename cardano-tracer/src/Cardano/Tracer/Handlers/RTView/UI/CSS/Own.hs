@@ -143,6 +143,10 @@ span[data-tooltip] {
   max-width: 150px;
 }
 
+.rt-view-error-msg-input {
+  max-width: 350px;
+}
+
 /* Dark Theme */
 
 .dark {
@@ -216,6 +220,12 @@ span[data-tooltip] {
 
 .dark .rt-view-delete-icon svg {
   width: 20px;
+  color: red;
+  cursor: pointer;
+}
+
+.dark .rt-view-delete-errors-icon svg {
+  width: 22px;
   color: red;
   cursor: pointer;
 }
@@ -509,6 +519,12 @@ span[data-tooltip] {
 
 .light .rt-view-delete-icon svg {
   width: 20px;
+  color: red;
+  cursor: pointer;
+}
+
+.light .rt-view-delete-errors-icon svg {
+  width: 22px;
   color: red;
   cursor: pointer;
 }
