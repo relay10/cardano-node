@@ -15,6 +15,7 @@ import           Data.Time.Format (defaultTimeLocale, formatTime)
 import qualified Graphics.UI.Threepenny as UI
 import           Graphics.UI.Threepenny.Core
 import           System.Time.Extra (sleep)
+import           Text.Read (readMaybe)
 
 import           Cardano.Logging (SeverityS (..))
 
@@ -60,17 +61,23 @@ updateNodesErrors window connectedNodes nodesErrors = do
   forM_ connected $ \nodeId@(NodeId anId) -> do
     errorsFromNode <- liftIO $ getErrors nodesErrors nodeId
     unless (null errorsFromNode) $ do
-      -- Update errors number.
+      -- Update errors number (as it is in the state).
       setTextValue (anId <> "__node-errors-num") (showT $ length errorsFromNode)
-      -- Add errors.
-      errorRows <-
-        forM errorsFromNode $ \(errorIx, (msg, sev, ts)) ->
-          mkErrorRow errorIx nodeId msg sev ts
-      whenJustM (UI.getElementById window (T.unpack anId <> "__node-errors-tbody")) $ \el ->
-        void $ element el #+ errorRows
       -- Enable 'Details' button.
-      findAndSet (set UI.enabled True)
-                 window $ anId <> "__node-errors-details-button"
+      findAndSet (set UI.enabled True) window (anId <> "__node-errors-details-button")
+      -- Add errors if needed.
+      whenJustM (UI.getElementById window (T.unpack anId <> "__node-errors-tbody")) $ \el ->
+        whenJustM (readMaybe <$> get dataState el) $ \(numberOfDisplayedRows :: Int) -> do
+          let onlyNewErrors = drop numberOfDisplayedRows errorsFromNode
+          unless (null onlyNewErrors) $ do
+            -- Prepare rows for hese new errors.
+            errorRows <-
+              forM onlyNewErrors $ \(errorIx, (msg, sev, ts)) ->
+                mkErrorRow errorIx nodeId msg sev ts
+            -- Add them actually and remember their new number.
+            let newNumberOfDisplayedRows = numberOfDisplayedRows + length onlyNewErrors
+            void $ element el # set dataState (show newNumberOfDisplayedRows)
+                              #+ errorRows
  where
   mkErrorRow _errorIx (NodeId anId) msg sev ts = do
     copyErrorIcon <- image "has-tooltip-multiline has-tooltip-left rt-view-copy-icon" copySVG

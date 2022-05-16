@@ -5,7 +5,9 @@ module Cardano.Tracer.Handlers.RTView.UI.HTML.Node.Errors
   ( mkErrorsTable
   ) where
 
-import           Data.Text (unpack) 
+import           Control.Monad (void)
+import           Control.Monad.Extra (whenJustM)
+import           Data.Text (unpack)
 import qualified Graphics.UI.Threepenny as UI
 import           Graphics.UI.Threepenny.Core
 
@@ -45,16 +47,23 @@ mkErrorsTable window nodeId@(NodeId anId) nodesErrors = do
                   [ UI.table ## (id' <> "__errors-table") #. "table is-fullwidth rt-view-errors-table" #+
                       [ UI.mkElement "thead" #+
                           [ UI.tr #+
-                              [ UI.th #+ [string "Timestamp"]
-                              , UI.th #+ [string "Severity"]
-                              , UI.th #+ [string
-                              "Message"]
+                              [ UI.th #+
+                                  [ string "Timestamp"
+                                  ]
+                              , UI.th #+
+                                  [ string "Severity"
+                                  ]
+                              , UI.th #+
+                                  [ string "Message"
+                                  ]
                               , UI.th #+
                                   [ element deleteAll
                                   ]
                               ]
                           ]
-                      , UI.mkElement "tbody" ## (id' <> "__node-errors-tbody") #+ []
+                      , UI.mkElement "tbody" ## (id' <> "__node-errors-tbody")
+                                             # set dataState "0"
+                                             #+ []
                       ]
                   ]
               ]
@@ -68,3 +77,9 @@ mkErrorsTable window nodeId@(NodeId anId) nodesErrors = do
     findByClassAndDo window (anId <> "-node-error-row") UI.delete
     -- Delete errors from state.
     liftIO $ deleteAllErrors nodesErrors nodeId
+    -- Reset number of errors and disable Detail button.
+    setTextValue (anId <> "__node-errors-num") "0"
+    findAndSet (set UI.enabled False) window (anId <> "__node-errors-details-button")
+    -- Reset number of currently displayed errors rows.
+    whenJustM (UI.getElementById window (unpack anId <> "__node-errors-tbody")) $ \el ->
+      void $ element el # set dataState "0"

@@ -121,7 +121,7 @@ addNodeColumn window loggingConfig nodesErrors nodeId@(NodeId anId) = do
   addNodeCell "errors" [ UI.div #. "buttons has-addons" #+
                            [ UI.button ## (id' <> "__node-errors-num")
                                        #. "button is-static"
-                                       # set text "—"
+                                       # set text "0"
                            , element errorsDetailsButton
                            ]
                        , element errorsTable
