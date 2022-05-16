@@ -27,7 +27,7 @@ mkEKGMetricsWindow anId = do
               , element closeIt
               ]
           , UI.mkElement "section" #. "modal-card-body rt-view-ekg-metrics-body" #+
-              [ UI.div ## "chain-charts" #. "columns" #+
+              [ UI.div ## "ekg-metrics-columns" #. "columns" #+
                   [ UI.div #. "column" #+
                       [ UI.span #. "is-size-4 has-text-weight-bold" # set text "Metric name"
                       , UI.p #. "mt-3" #+

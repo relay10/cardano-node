@@ -9,6 +9,7 @@ import           Control.Concurrent.STM.TVar
 import           Control.Monad
 import           Control.Monad.Extra (whenJustM)
 import           Data.List (find)
+import           Data.List.Extra (notNull)
 import           Data.Maybe (mapMaybe)
 import qualified Data.Map.Strict as M
 import           Data.Set ((\\))
@@ -51,6 +52,9 @@ doUpdatePeers window nodeId@(NodeId anId) displayedPeers trObValue =
     else do
       -- Update peers number.
       setTextValue (anId <> "__node-peers-num") (showT (length peersParts))
+      -- If there is at least one connected peer, we enable 'Details' button.
+      findAndSet (set UI.enabled $ notNull peersParts)
+                 window $ anId <> "__node-peers-details-button"
       -- Update particular info about peers.
       let connectedPeers = getConnectedPeers
           connectedPeersAddresses = getConnectedPeersAddresses
@@ -63,9 +67,6 @@ doUpdatePeers window nodeId@(NodeId anId) displayedPeers trObValue =
               newlyConnectedPeers = connectedPeersAddresses \\ displayedPeersAddresses -- Not in displayed
           deleteRowsForDisconnected disconnectedPeers
           addRowsForNewlyConnected newlyConnectedPeers connectedPeers
-          -- If there is at least one connected peer, we enable 'Details' button.
-          findAndSet (set UI.enabled $ not (S.null connectedPeers))
-                     window $ anId <> "__node-peers-details-button"
         else
           -- No changes with number of peers, only their data was changed.
           updateConnectedPeersData connectedPeers

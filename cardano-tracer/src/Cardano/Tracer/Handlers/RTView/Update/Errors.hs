@@ -43,7 +43,6 @@ runErrorsUpdater connectedNodes nodesErrors savedTO = forever $ do
  where
   itIsError sev =
     case sev of
-      Warning   -> True
       Error     -> True
       Critical  -> True
       Alert     -> True
@@ -84,7 +83,7 @@ updateNodesErrors window connectedNodes nodesErrors = do
             [ UI.span # set text (preparedTS ts)
             ]
         , UI.td #+
-            [ UI.span # set text (show sev)
+            [ UI.span #. "tag is-medium is-danger" # set text (show sev)
             ]
         , UI.td #+
             [ UI.span # set text (T.unpack $ shortenMsg msg)

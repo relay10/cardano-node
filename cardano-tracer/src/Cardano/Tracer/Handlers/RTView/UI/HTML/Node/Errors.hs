@@ -34,7 +34,7 @@ mkErrorsTable anId = do
                               [ UI.th #+ [UI.span # set text "Time"]
                               , UI.th #+ [UI.span # set text "Severity"]
                               , UI.th #+ [UI.span # set text "Message"]
-                              , UI.th #+ [UI.span # set text "Actions"]
+                              , UI.th #+ [UI.span # set html "&nbsp;"]
                               ]
                           ]
                       , UI.mkElement "tbody" ## (anId <> "__node-errors-tbody") #+ []
