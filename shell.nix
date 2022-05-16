@@ -130,7 +130,7 @@ let
 
   devops =
     let cluster = pkgs.supervisord-workbench-for-profile
-      { profileName = "devops-alzo";
+      { profileName = "devops-bage";
         useCabalRun = false;
       };
     in cardanoNodeProject.shellFor {

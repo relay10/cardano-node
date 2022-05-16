@@ -1,8 +1,8 @@
 PROJECT_NAME = cardano-node
 NUM_PROC     = $(nproc --all)
 
-## One of:  shey alra mary alzo
-ERA             ?= alzo
+## One of:  shey alra mary alzo bage
+ERA             ?= bage
 
 CLUSTER_PROFILE ?= default-${ERA}
 ifneq "${CLUSTER_PROFILE}" "default-${ERA}"
