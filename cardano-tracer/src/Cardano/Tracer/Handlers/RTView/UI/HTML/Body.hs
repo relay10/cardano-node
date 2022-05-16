@@ -18,6 +18,7 @@ import           Cardano.Tracer.Handlers.RTView.UI.Img.Icons
 import           Cardano.Tracer.Handlers.RTView.UI.HTML.About
 import           Cardano.Tracer.Handlers.RTView.UI.HTML.NoNodes
 import qualified Cardano.Tracer.Handlers.RTView.UI.JS.Charts as Chart
+import           Cardano.Tracer.Handlers.RTView.UI.JS.Utils
 import           Cardano.Tracer.Handlers.RTView.UI.Charts
 import           Cardano.Tracer.Handlers.RTView.UI.Theme
 import           Cardano.Tracer.Handlers.RTView.UI.Types
@@ -366,6 +367,8 @@ mkPageBody window networkConfig connected
           , footer
           ]
       ]
+
+  closeModalsByEscapeButton
 
   Chart.prepareChartsJS
 

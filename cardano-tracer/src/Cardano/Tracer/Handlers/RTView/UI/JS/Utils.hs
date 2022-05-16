@@ -1,7 +1,8 @@
 {-# LANGUAGE QuasiQuotes #-}
 
 module Cardano.Tracer.Handlers.RTView.UI.JS.Utils
-  ( copyTextToClipboard
+  ( closeModalsByEscapeButton
+  , copyTextToClipboard
   , downloadCSVFile
   , selectOption
   ) where
@@ -42,3 +43,19 @@ selectOption
   -> UI ()
 selectOption selectId optionValue =
   UI.runFunction $ UI.ffi "document.getElementById(%1).value = %2;" selectId optionValue
+
+closeModalsByEscapeButton :: UI ()
+closeModalsByEscapeButton =
+  UI.runFunction $ UI.ffi closeModalsByEscapeButton'
+
+closeModalsByEscapeButton' :: String
+closeModalsByEscapeButton' = [s|
+$(document).keydown(function(event) {
+  if (event.keyCode == 27) {
+    var modals = document.getElementsByClassName("modal is-active");
+    for (var i=0; i < modals.length; i++) {
+      modals[i].className = "modal";
+    }
+  }
+});
+|]
