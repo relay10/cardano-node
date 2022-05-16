@@ -11,6 +11,7 @@ import           Control.Monad.Extra (whenJust)
 import qualified Data.Text as T
 import           Data.Text.Encoding (encodeUtf8)
 import qualified Graphics.UI.Threepenny as UI
+import           System.Time.Extra (sleep)
 
 import           Cardano.Tracer.Configuration
 import           Cardano.Tracer.Handlers.RTView.State.EraSettings
@@ -45,6 +46,8 @@ runRTView
 runRTView TracerConfig{logging, network, hasRTView}
           connectedNodes acceptedMetrics savedTO dpRequestors =
   whenJust hasRTView $ \(Endpoint host port) -> do
+    -- Pause to prevent collision between "Listening"-notifications from servers.
+    sleep 0.3
     -- Initialize displayed stuff outside of main page renderer,
     -- to be able to update corresponding elements after page reloading.
     displayedElements <- initDisplayedElements
