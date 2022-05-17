@@ -29,9 +29,10 @@ addNodeColumn
   :: UI.Window
   -> NonEmpty LoggingParams
   -> Errors
+  -> UI.Timer
   -> NodeId
   -> UI ()
-addNodeColumn window loggingConfig nodesErrors nodeId@(NodeId anId) = do
+addNodeColumn window loggingConfig nodesErrors updateErrorsTimer nodeId@(NodeId anId) = do
   let id' = unpack anId
   ls <- logsSettings loggingConfig id'
 
@@ -42,7 +43,7 @@ addNodeColumn window loggingConfig nodesErrors nodeId@(NodeId anId) = do
                                   # set text "Details"
   on UI.click peersDetailsButton . const $ element peersTable #. "modal is-active"
 
-  errorsTable <- mkErrorsTable window nodeId nodesErrors
+  errorsTable <- mkErrorsTable window nodeId nodesErrors updateErrorsTimer
   errorsDetailsButton <- UI.button ## (id' <> "__node-errors-details-button")
                                    #. "button is-danger"
                                    # set UI.enabled False

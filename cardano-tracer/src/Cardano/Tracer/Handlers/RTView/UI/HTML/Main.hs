@@ -98,6 +98,10 @@ mkMainPage connectedNodes displayedElements acceptedMetrics savedTO
   restoreTheme window
   restoreChartsSettings
 
+  uiErrorsTimer <- UI.timer # set UI.interval 3000
+  on UI.tick uiErrorsTimer . const $
+    updateNodesErrors window connectedNodes nodesErrors
+
   whenM (liftIO $ readTVarIO reloadFlag) $ do
     updateUIAfterReload
       window
@@ -108,18 +112,17 @@ mkMainPage connectedNodes displayedElements acceptedMetrics savedTO
       colors
       datasetIndices
       nodesErrors
+      uiErrorsTimer
     liftIO $ pageWasNotReload reloadFlag
 
   -- Uptime is a real-time clock, so update it every second.
   uiUptimeTimer <- UI.timer # set UI.interval 1000
   on UI.tick uiUptimeTimer . const $
     updateNodesUptime connectedNodes displayedElements
-  UI.start uiUptimeTimer
 
   uiEKGTimer <- UI.timer # set UI.interval 1000
   on UI.tick uiEKGTimer . const $
     updateEKGMetrics acceptedMetrics
-  UI.start uiEKGTimer
 
   uiNodesTimer <- UI.timer # set UI.interval 1500
   on UI.tick uiNodesTimer . const $
@@ -135,23 +138,23 @@ mkMainPage connectedNodes displayedElements acceptedMetrics savedTO
       colors
       datasetIndices
       nodesErrors
-  UI.start uiNodesTimer
+      uiErrorsTimer
 
   uiPeersTimer <- UI.timer # set UI.interval 3000
   on UI.tick uiPeersTimer . const $ do
     updateNodesPeers window peers savedTO
     updateKESInfo window acceptedMetrics nodesEraSettings displayedElements
-  UI.start uiPeersTimer
-
-  uiErrorsTimer <- UI.timer # set UI.interval 3000
-  on UI.tick uiErrorsTimer . const $
-    updateNodesErrors window connectedNodes nodesErrors
-  UI.start uiErrorsTimer
 
   uiNodeStateTimer <- UI.timer # set UI.interval 5000
   on UI.tick uiNodeStateTimer . const $
     askNSetNodeState window connectedNodes dpRequestors displayedElements
+
+  UI.start uiUptimeTimer
+  UI.start uiNodesTimer
   UI.start uiNodeStateTimer
+  UI.start uiPeersTimer
+  UI.start uiErrorsTimer
+  UI.start uiEKGTimer
 
   on UI.disconnect window . const $ do
     UI.stop uiNodesTimer

@@ -20,8 +20,9 @@ mkErrorsTable
   :: UI.Window
   -> NodeId
   -> Errors
+  -> UI.Timer
   -> UI Element
-mkErrorsTable window nodeId@(NodeId anId) nodesErrors = do
+mkErrorsTable window nodeId@(NodeId anId) nodesErrors updateErrorsTimer = do
   let id' = unpack anId
   closeIt <- UI.button #. "delete"
   deleteAll <- image "has-tooltip-multiline has-tooltip-left rt-view-delete-errors-icon" trashSVG
@@ -36,11 +37,17 @@ mkErrorsTable window nodeId@(NodeId anId) nodesErrors = do
                               #+ [image "rt-view-search-errors-icon" searchSVG]
   -- If the user clicked the search button.
   on UI.click searchMessages . const $
-    searchErrorMessages window searchMessagesInput nodeId nodesErrors
+    searchErrorMessages window searchMessagesInput nodeId nodesErrors updateErrorsTimer
   -- If the user hits Enter key.
   on UI.keyup searchMessagesInput $ \keyCode ->
     when (keyCode == 13) $
-      searchErrorMessages window searchMessagesInput nodeId nodesErrors
+      searchErrorMessages window searchMessagesInput nodeId nodesErrors updateErrorsTimer
+  -- If the user changed text in input... 
+  on UI.valueChange searchMessagesInput $ \inputText ->
+    when (null inputText) $
+      -- ... and this text is empty, it means that search/filter is off,
+      -- so start the timer for update errors again.
+      UI.start updateErrorsTimer
 
   errorsTable <-
     UI.div #. "modal" #+

@@ -125,14 +125,19 @@ searchErrorMessages
   -> Element
   -> NodeId
   -> Errors
+  -> UI.Timer
   -> UI ()
-searchErrorMessages window searchInput nodeId@(NodeId anId) nodesErrors = do
+searchErrorMessages window searchInput nodeId@(NodeId anId) nodesErrors updateErrorsTimer = do
   textToSearch <- (T.strip . T.pack) <$> get value searchInput
-  unless (T.null textToSearch) $
+  unless (T.null textToSearch) $ do
+    -- Ok, there is non-empty text we want to search. It means that now we are
+    -- in search/filter mode, and during this period the new messages shouldn't be added,
+    -- so we stop update timer temporarily.
+    UI.stop updateErrorsTimer
     liftIO (getErrorsFilteredByText textToSearch nodesErrors nodeId) >>= \case
       [] -> do
-        -- There is nothing found. So we have to display an empty list of
-        -- errors to inform the user that there is no corresponding errors.
+        -- There is nothing found. So we have to inform the user that
+        -- there is no corresponding errors.
         findByClassAndDo window (anId <> "-node-error-row") UI.delete
         -- Reset number of currently displayed errors rows.
         whenJustM (UI.getElementById window (T.unpack anId <> "__node-errors-tbody")) $ \el ->

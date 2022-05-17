@@ -57,9 +57,10 @@ updateNodesUI
   -> Colors
   -> DatasetsIndices
   -> Errors
+  -> UI.Timer
   -> UI ()
-updateNodesUI window connectedNodes displayedElements acceptedMetrics savedTO
-              nodesEraSettings dpRequestors loggingConfig colors datasetIndices nodesErrors = do
+updateNodesUI window connectedNodes displayedElements acceptedMetrics savedTO nodesEraSettings
+              dpRequestors loggingConfig colors datasetIndices nodesErrors updateErrorsTimer = do
   (connected, displayedEls) <- liftIO . atomically $ (,)
     <$> readTVar connectedNodes
     <*> readTVar displayedElements
@@ -69,7 +70,7 @@ updateNodesUI window connectedNodes displayedElements acceptedMetrics savedTO
     let disconnected   = displayed \\ connected -- In 'displayed' but not in 'connected'.
         newlyConnected = connected \\ displayed -- In 'connected' but not in 'displayed'.
     deleteColumnsForDisconnected window connected disconnected
-    addColumnsForConnected window newlyConnected loggingConfig nodesErrors
+    addColumnsForConnected window newlyConnected loggingConfig nodesErrors updateErrorsTimer
     checkNoNodesState window connected
     askNSetNodeInfo window dpRequestors newlyConnected displayedElements
     addDatasetsForConnected window newlyConnected colors datasetIndices displayedElements
@@ -85,12 +86,13 @@ addColumnsForConnected
   -> Set NodeId
   -> NonEmpty LoggingParams
   -> Errors
+  -> UI.Timer
   -> UI ()
-addColumnsForConnected window newlyConnected loggingConfig nodesErrors = do
+addColumnsForConnected window newlyConnected loggingConfig nodesErrors updateErrorsTimer = do
   unless (S.null newlyConnected) $
     findAndShow window "main-table-container"
   forM_ newlyConnected $
-    addNodeColumn window loggingConfig nodesErrors
+    addNodeColumn window loggingConfig nodesErrors updateErrorsTimer
 
 addDatasetsForConnected
   :: UI.Window

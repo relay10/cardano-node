@@ -27,13 +27,14 @@ updateUIAfterReload
   -> Colors
   -> DatasetsIndices
   -> Errors
+  -> UI.Timer
   -> UI ()
 updateUIAfterReload window connectedNodes displayedElements dpRequestors
-                    loggingConfig colors datasetIndices nodesErrors = do
+                    loggingConfig colors datasetIndices nodesErrors updateErrorsTimer = do
   -- Ok, web-page was reload (i.e. it's the first update after DOM-rendering),
   -- so displayed state should be restored immediately.
   connected <- liftIO $ readTVarIO connectedNodes  
-  addColumnsForConnected window connected loggingConfig nodesErrors
+  addColumnsForConnected window connected loggingConfig nodesErrors updateErrorsTimer
   checkNoNodesState window connected
   askNSetNodeInfo window dpRequestors connected displayedElements
   addDatasetsForConnected window connected colors datasetIndices displayedElements
