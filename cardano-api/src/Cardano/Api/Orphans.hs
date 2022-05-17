@@ -128,6 +128,7 @@ import qualified Data.ByteString.Base16 as B16
 import qualified Data.ByteString.Short as SBS
 import qualified Data.ByteString.UTF8 as BSU
 import qualified Data.Compact.VMap as VMap
+import qualified Data.List.NonEmpty as NEL
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 import qualified Data.Text as Text
@@ -141,7 +142,7 @@ import qualified PlutusCore
 import qualified PlutusCore.Core as Plutus
 import qualified PlutusCore.DeBruijn
 import qualified PlutusCore.Evaluation.Machine.ExBudget as Cek
-import qualified PlutusCore.Evaluation.Machine.Exception
+import qualified PlutusCore.Evaluation.Machine.Exception as PlutusCore
 import qualified UntypedPlutusCore.Core.Type
 import qualified UntypedPlutusCore.Evaluation.Machine.Cek.Internal as Cek
 
@@ -422,7 +423,9 @@ instance Crypto.Crypto crypto => ToJSON (VMap VB VB (Shelley.KeyHash    'Shelley
 instance Crypto.Crypto crypto => ToJSON (VMap VB VP (Shelley.Credential 'Shelley.Staking   crypto) (Shelley.CompactForm Shelley.Coin)) where
   toJSON = toJSON . fmap fromCompact . VMap.toMap
 
------
+--------------------------
+-- Transaction submit work
+--------------------------
 
 instance ToJSON (PredicateFailure (Core.EraRule "LEDGER" era)) => ToJSON (ApplyTxError era) where
   toJSON (ApplyTxError es) = toJSON es
@@ -1332,7 +1335,7 @@ instance ToJSON (Alonzo.UtxosPredicateFailure (Alonzo.AlonzoEra StandardCrypto))
   toJSON (Alonzo.ValidationTagMismatch isValidating reason) = object
     [ "kind"          .= String "ValidationTagMismatch"
     , "isvalidating"  .= isValidating
-    , "reason"        .= reason
+    , "reason"        .= tagMismatchDescriptionToJson reason
     ]
   toJSON (Alonzo.CollectErrors errors) = object
     [ "kind"    .= String "CollectErrors"
@@ -1374,30 +1377,31 @@ instance ToJSON (Alonzo.CollectError StandardCrypto) where
               Alonzo.ReferenceScriptsNotSupported     -> String "Reference scripts not supported"
               Alonzo.ReferenceInputsNotSupported      -> String "Reference inputs not supported"
 
-instance ToJSON Alonzo.TagMismatchDescription where
-  toJSON tmd = case tmd of
-    Alonzo.PassedUnexpectedly -> object
-      [ "kind"  .= String "TagMismatchDescription"
-      , "error" .= String "PassedUnexpectedly"
-      ]
-    Alonzo.FailedUnexpectedly forReasons -> object
-      [ "kind"            .= String "TagMismatchDescription"
-      , "error"           .= String "FailedUnexpectedly"
-      , "reconstruction"  .= forReasons
-      ]
+tagMismatchDescriptionToJson :: Alonzo.TagMismatchDescription -> Value
+tagMismatchDescriptionToJson = \case
+  Alonzo.PassedUnexpectedly -> object
+    [ "kind"  .= String "TagMismatchDescription"
+    , "error" .= String "PassedUnexpectedly"
+    ]
+  Alonzo.FailedUnexpectedly forReasons -> object
+    [ "kind"            .= String "TagMismatchDescription"
+    , "error"           .= String "FailedUnexpectedly"
+    , "reconstruction"  .= fmap failureDescriptionToJson (NEL.toList forReasons)
+    ]
 
-instance ToJSON Alonzo.FailureDescription where
-  toJSON = \case
-    Alonzo.OnePhaseFailure t -> object
-      [ "kind"        .= String "FailureDescription"
-      , "error"       .= String "OnePhaseFailure"
-      , "description" .= t
-      ]
-    Alonzo.PlutusFailure _t bs -> object
-      [ "kind"                  .= String "FailureDescription"
-      , "error"                 .= String "PlutusFailure"
-      , "reconstructionDetail"  .= Alonzo.debugPlutus (BSU.toString bs)
-      ]
+failureDescriptionToJson :: Alonzo.FailureDescription -> Value
+failureDescriptionToJson = \case
+  Alonzo.OnePhaseFailure t -> object
+    [ "kind"        .= String "FailureDescription"
+    , "error"       .= String "OnePhaseFailure"
+    , "description" .= t
+    ]
+  Alonzo.PlutusFailure t bs -> object
+    [ "kind"                  .= String "FailureDescription"
+    , "error"                 .= String "PlutusFailure"
+    , "reconstructionDetail"  .= plutusDebugInfoToJson (Alonzo.debugPlutus (BSU.toString bs))
+    , "description"           .= t -- TODO delete
+    ]
 
 instance
   ( ToJSON (Core.AuxiliaryDataHash StandardCrypto)
@@ -1411,53 +1415,52 @@ instance
 -- Helper functions
 --------------------------------------------------------------------------------
 
-instance ToJSON Alonzo.PlutusDebugInfo where
-  toJSON = \case
-    Alonzo.DebugSuccess budget -> object
-      [ "kind"    .= String "DebugSuccess"
-      , "budget"  .= budget
-      ]
-    Alonzo.DebugCannotDecode msg -> object
-      [ "kind"    .= String "DebugCannotDecode"
-      , "message" .= toJSON msg
-      ]
-    Alonzo.DebugInfo texts e d -> object
-      [ "kind"  .= String "DebugInfo"
-      , "texts" .= texts
-      , "error" .= e
-      , "debug" .= d
-      ]
-    Alonzo.DebugBadHex msg -> object
-      [ "kind"    .= String "DebugBadHex"
-      , "message" .= toJSON msg
-      ]
+plutusDebugInfoToJson :: Alonzo.PlutusDebugInfo -> Value
+plutusDebugInfoToJson = \case
+  Alonzo.DebugSuccess budget -> object
+    [ "kind"    .= String "DebugSuccess"
+    , "budget"  .= budget
+    ]
+  Alonzo.DebugCannotDecode msg -> object
+    [ "kind"    .= String "DebugCannotDecode"
+    , "message" .= toJSON msg
+    ]
+  Alonzo.DebugInfo texts e d -> object
+    [ "kind"  .= String "DebugInfo"
+    , "texts" .= texts
+    , "error" .= plutusErrorToJson e
+    , "debug" .= plutusDebugToJson d
+    ]
+  Alonzo.DebugBadHex msg -> object
+    [ "kind"    .= String "DebugBadHex"
+    , "message" .= toJSON msg
+    ]
 
+plutusErrorToJson :: Alonzo.PlutusError -> Value
+plutusErrorToJson = \case
+  Alonzo.PlutusErrorV1 evaluationError -> evaluationErrorToJson evaluationError
+  Alonzo.PlutusErrorV2 evaluationError -> evaluationErrorToJson evaluationError
 
-instance ToJSON Alonzo.PlutusError where
-  toJSON = \case
-    Alonzo.PlutusErrorV1 evaluationError -> toJSON evaluationError
-    Alonzo.PlutusErrorV2 evaluationError -> toJSON evaluationError
-
-instance ToJSON Alonzo.PlutusDebug where
-  toJSON = \case
-    Alonzo.PlutusDebugV1 costModel exUnits sbs ds protVer -> object
-      [ "costModel"   .= costModel
-      , "exUnits"     .= exUnits
-      , "sbs"         .= toJSON (Text.decodeLatin1 (B16.encode (SBS.fromShort sbs)))
-      , "scriptHash"  .= scriptHashOf Alonzo.PlutusV1 sbs
-      , "ds"          .= toJSON ds
-      , "dsSummary"   .= plutusDataToDsSummary ds
-      , "protVer"     .= protVer
-      ]
-    Alonzo.PlutusDebugV2 costModel exUnits sbs ds protVer -> object
-      [ "costModel"   .= costModel
-      , "exUnits"     .= exUnits
-      , "sbs"         .= toJSON (Text.decodeLatin1 (B16.encode (SBS.fromShort sbs)))
-      , "scriptHash"  .= scriptHashOf Alonzo.PlutusV2 sbs
-      , "ds"          .= toJSON ds
-      , "dsSummary"   .= plutusDataToDsSummary ds
-      , "protVer"     .= protVer
-      ]
+plutusDebugToJson :: Alonzo.PlutusDebug -> Value
+plutusDebugToJson = \case
+  Alonzo.PlutusDebugV1 _costModel exUnits sbs ds protVer -> object
+    [ "exUnits"     .= exUnits
+    , "sbs"         .= toJSON (Text.decodeLatin1 (B16.encode (SBS.fromShort sbs)))
+    , "scriptHash"  .= scriptHashOf Alonzo.PlutusV1 sbs -- TODO keep
+    -- , "ds"          .= toJSON ds
+    , "dsSummary"   .= plutusDataToDsSummary ds
+    -- , "costModel"   .= costModel
+    , "protVer"     .= protVer
+    ]
+  Alonzo.PlutusDebugV2 _costModel exUnits sbs ds protVer -> object
+    [ "exUnits"     .= exUnits
+    , "sbs"         .= toJSON (Text.decodeLatin1 (B16.encode (SBS.fromShort sbs)))
+    , "scriptHash"  .= scriptHashOf Alonzo.PlutusV2 sbs -- TODO keep
+    -- , "ds"          .= toJSON ds
+    , "dsSummary"   .= plutusDataToDsSummary ds
+    -- , "costModel"   .= costModel
+    , "protVer"     .= protVer
+    ]
 
 plutusDataToDsSummary :: [Plutus.Data] -> Aeson.Value
 plutusDataToDsSummary [dat, redeemer, info] = Aeson.object
@@ -1475,22 +1478,22 @@ plutusInfoDataToDsSummary :: Plutus.Data -> Aeson.Value
 plutusInfoDataToDsSummary info = case PV1.fromData info of
   Nothing -> String "no-info"
   Just PV1.ScriptContext { PV1.scriptContextTxInfo, PV1.scriptContextPurpose} -> object
-    [ "scriptContextTxInfo" .= txInfoToJson scriptContextTxInfo
-    , "scriptContextPurpose" .= scriptPurposeToJson scriptContextPurpose
+    [ "txInfo"  .= txInfoToJson scriptContextTxInfo
+    , "purpose" .= scriptPurposeToJson scriptContextPurpose
     ]
 
 txInfoToJson :: PV1.TxInfo -> Value
 txInfoToJson txInfo = Aeson.object
-  [ "txInfoInputs"      .= toJSON (PV1.toData (PV1.txInfoInputs txInfo))
-  , "txInfoOutputs"     .= toJSON (PV1.toData (PV1.txInfoOutputs txInfo))
-  , "txInfoFee"         .= toJSON (PV1.toData (PV1.txInfoFee txInfo))
-  , "txInfoMint"        .= toJSON (PV1.toData (PV1.txInfoMint txInfo))
-  , "txInfoDCert"       .= toJSON (PV1.toData (PV1.txInfoDCert txInfo))
-  , "txInfoWdrl"        .= toJSON (PV1.toData (PV1.txInfoWdrl txInfo))
-  , "txInfoValidRange"  .= toJSON (PV1.toData (PV1.txInfoValidRange txInfo))
-  , "txInfoSignatories" .= toJSON (PV1.toData (PV1.txInfoSignatories txInfo))
-  , "txInfoData"        .= toJSON (PV1.toData (PV1.txInfoData txInfo))
-  , "txInfoId"          .= toJSON (PV1.toData (PV1.txInfoId txInfo))
+  [ "inputs"      .= toJSON @Text (show (PV1.txInfoInputs txInfo))
+  , "outputs"     .= toJSON @Text (show (PV1.txInfoOutputs txInfo))
+  , "fee"         .= toJSON @Text (show (PV1.txInfoFee txInfo))
+  , "mint"        .= toJSON @Text (show (PV1.txInfoMint txInfo))
+  , "dCert"       .= toJSON @Text (show (PV1.txInfoDCert txInfo))
+  , "wdrl"        .= toJSON @Text (show (PV1.txInfoWdrl txInfo))
+  , "validRange"  .= toJSON @Text (show (PV1.txInfoValidRange txInfo))
+  , "signatories" .= toJSON @Text (show (PV1.txInfoSignatories txInfo))
+  , "data"        .= toJSON @Text (show (PV1.txInfoData txInfo))
+  , "id"          .= toJSON @Text (show (PV1.txInfoId txInfo))
   ]
 
 -- toData :: (ToData a) => a -> PLC.Data
@@ -1551,28 +1554,28 @@ scriptHashOf lang sbs = Text.pack $ Hash.hashToStringAsHex h
           Alonzo.PlutusV1 -> Ledger.hashScript @Consensus.StandardAlonzo (Ledger.PlutusScript lang sbs)
           Alonzo.PlutusV2 -> error "not implemented"
 
-instance ToJSON Plutus.EvaluationError where
-  toJSON = \case
-    Plutus.CekError e -> object
-      [ "kind"  .= String "CekError"
-      , "error" .= toJSON @Text (show e)
-      , "value" .= toJSON e
-      ]
-    Plutus.DeBruijnError e -> object
-      [ "kind"  .= String "DeBruijnError"
-      , "error" .= toJSON @Text (show e)
-      ]
-    Plutus.CodecError e -> object
-      [ "kind"  .= String "CodecError"
-      , "error" .= toJSON @Text (show e)
-      ]
-    Plutus.IncompatibleVersionError actual -> object
-      [ "kind"    .= String "IncompatibleVersionError"
-      , "actual"  .= toJSON actual
-      ]
-    Plutus.CostModelParameterMismatch -> object
-      [ "kind"  .= String "CostModelParameterMismatch"
-      ]
+evaluationErrorToJson :: Plutus.EvaluationError -> Value
+evaluationErrorToJson = \case
+  Plutus.CekError e -> object
+    [ "kind"  .= String "CekError"
+    , "error" .= toJSON @Text (show e)
+    , "value" .= toJSON e
+    ]
+  Plutus.DeBruijnError e -> object
+    [ "kind"  .= String "DeBruijnError"
+    , "error" .= toJSON @Text (show e)
+    ]
+  Plutus.CodecError e -> object
+    [ "kind"  .= String "CodecError"
+    , "error" .= toJSON @Text (show e)
+    ]
+  Plutus.IncompatibleVersionError actual -> object
+    [ "kind"    .= String "IncompatibleVersionError"
+    , "actual"  .= toJSON actual
+    ]
+  Plutus.CostModelParameterMismatch -> object
+    [ "kind"  .= String "CostModelParameterMismatch"
+    ]
 
 instance ToJSON (Plutus.Version ann) where
   toJSON (Plutus.Version _ i j k) = object
@@ -1647,7 +1650,15 @@ instance (ToJSON name, ToJSON fun) => ToJSON (UntypedPlutusCore.Core.Type.Term n
       [ "kind" .= String "Error"
       ]
 
-instance ToJSON fun => ToJSON (Cek.EvaluationError Cek.CekUserError (PlutusCore.Evaluation.Machine.Exception.MachineError fun)) where
+-- Used by ToJSON (Cek.CekEvaluationException name uni fun)
+instance ToJSON fun => ToJSON (Cek.EvaluationError Cek.CekUserError (PlutusCore.MachineError fun)) where
+  toJSON = \case
+    PlutusCore.InternalEvaluationError internal -> object
+      [ "InternalEvaluationError" .= internal
+      ]
+    PlutusCore.UserEvaluationError user -> object
+      [ "UserEvaluationError" .= id @Cek.CekUserError user
+      ]
 
 instance ToJSON PlutusCore.NamedDeBruijn where
 
@@ -1663,15 +1674,28 @@ instance (forall a. ToJSON (f a)) => ToJSON (PlutusCore.Some f) where
 
 instance (ToJSON (uni (PlutusCore.Esc a)), ToJSON a) => ToJSON (PlutusCore.ValueOf uni a) where
   toJSON (PlutusCore.ValueOf u a) = object
-    [ "kind" .= String "ValueOf"
+    [ "kind"  .= String "ValueOf"
     , "uni"   .= toJSON u
     , "a"     .= toJSON a
     ]
 
-instance ToJSON fun => ToJSON (PlutusCore.Evaluation.Machine.Exception.MachineError fun) where
-
-instance ToJSON PlutusCore.Evaluation.Machine.Exception.UnliftingError where
-  toJSON _ = "UnliftingError"
+instance ToJSON fun => ToJSON (PlutusCore.MachineError fun) where
+  toJSON = \case
+    PlutusCore.NonPolymorphicInstantiationMachineError -> "NonPolymorphicInstantiationMachineError"
+    PlutusCore.NonWrapUnwrappedMachineError -> "NonWrapUnwrappedMachineError"
+    PlutusCore.NonFunctionalApplicationMachineError -> "NonFunctionalApplicationMachineError"
+    PlutusCore.OpenTermEvaluatedMachineError -> "OpenTermEvaluatedMachineError"
+    PlutusCore.UnliftingMachineError (PlutusCore.UnliftingErrorE t) -> object
+      [ "UnliftingMachineError" .= object
+        [ "UnliftingError" .= t
+        ]
+      ]
+    PlutusCore.BuiltinTermArgumentExpectedMachineError -> "BuiltinTermArgumentExpectedMachineError"
+    PlutusCore.UnexpectedBuiltinTermArgumentMachineError -> "UnexpectedBuiltinTermArgumentMachineError"
+    PlutusCore.EmptyBuiltinArityMachineError -> "EmptyBuiltinArityMachineError"
+    PlutusCore.UnknownBuiltin fun -> object
+      [ "UnknownBuiltin" .= fun
+      ]
 
 textShow :: Show a => a -> Text
 textShow = Text.pack . CP.show
@@ -1680,3 +1704,8 @@ showLastAppBlockNo :: WithOrigin (LastAppliedBlock crypto) -> Text
 showLastAppBlockNo wOblk =  case withOriginToMaybe wOblk of
                      Nothing -> "Genesis Block"
                      Just blk -> textShow . unBlockNo $ labBlockNo blk
+
+-- The following instances aren't used above
+
+instance ToJSON Alonzo.TagMismatchDescription where
+  toJSON = tagMismatchDescriptionToJson
