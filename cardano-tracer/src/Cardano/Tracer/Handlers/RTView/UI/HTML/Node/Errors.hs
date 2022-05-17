@@ -5,8 +5,7 @@ module Cardano.Tracer.Handlers.RTView.UI.HTML.Node.Errors
   ( mkErrorsTable
   ) where
 
-import           Control.Monad (void, when)
-import           Control.Monad.Extra (whenJustM)
+import           Control.Monad (when)
 import           Data.Text (pack, unpack)
 import qualified Graphics.UI.Threepenny as UI
 import           Graphics.UI.Threepenny.Core
@@ -28,7 +27,7 @@ mkErrorsTable window nodeId@(NodeId anId) nodesErrors = do
   deleteAll <- image "has-tooltip-multiline has-tooltip-left rt-view-delete-errors-icon" trashSVG
                      # set dataTooltip "Click to delete all errors. This action cannot be undone!"
   on UI.click deleteAll . const $
-    deleteAllErrorMessages
+    deleteAllErrorMessages window nodeId nodesErrors
 
   searchMessagesInput <- UI.input #. "input rt-view-search-messages"
                                   # set UI.type_ "text"
@@ -97,15 +96,3 @@ mkErrorsTable window nodeId@(NodeId anId) nodesErrors = do
       ]
   on UI.click closeIt . const $ element errorsTable #. "modal"
   return errorsTable
- where
-  deleteAllErrorMessages = do
-    -- Delete errors from window.
-    findByClassAndDo window (anId <> "-node-error-row") UI.delete
-    -- Delete errors from state.
-    liftIO $ deleteAllErrors nodesErrors nodeId
-    -- Reset number of errors and disable Detail button.
-    setTextValue (anId <> "__node-errors-num") "0"
-    findAndSet (set UI.enabled False) window (anId <> "__node-errors-details-button")
-    -- Reset number of currently displayed errors rows.
-    whenJustM (UI.getElementById window (unpack anId <> "__node-errors-tbody")) $ \el ->
-      void $ element el # set dataState "0"

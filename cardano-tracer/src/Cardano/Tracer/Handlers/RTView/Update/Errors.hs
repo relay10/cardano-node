@@ -6,6 +6,7 @@ module Cardano.Tracer.Handlers.RTView.Update.Errors
   ( runErrorsUpdater
   , updateNodesErrors
   , searchErrorMessages
+  , deleteAllErrorMessages
   ) where
 
 import           Control.Concurrent.STM.TVar
@@ -142,3 +143,20 @@ searchErrorMessages window textToSearch nodeId@(NodeId anId) nodesErrors =
       whenJustM (UI.getElementById window (T.unpack anId <> "__node-errors-tbody")) $ \el ->
         whenJustM (readMaybe <$> get dataState el) $ \(numberOfDisplayedRows :: Int) ->
           doAddErrorRows nodeId foundErrors el numberOfDisplayedRows
+
+deleteAllErrorMessages
+  :: UI.Window
+  -> NodeId
+  -> Errors
+  -> UI ()
+deleteAllErrorMessages window nodeId@(NodeId anId) nodesErrors = do
+  -- Delete errors from window.
+  findByClassAndDo window (anId <> "-node-error-row") UI.delete
+  -- Delete errors from state.
+  liftIO $ deleteAllErrors nodesErrors nodeId
+  -- Reset number of errors and disable Detail button.
+  setTextValue (anId <> "__node-errors-num") "0"
+  findAndSet (set UI.enabled False) window (anId <> "__node-errors-details-button")
+  -- Reset number of currently displayed errors rows.
+  whenJustM (UI.getElementById window (T.unpack anId <> "__node-errors-tbody")) $ \el ->
+    void $ element el # set dataState "0"
