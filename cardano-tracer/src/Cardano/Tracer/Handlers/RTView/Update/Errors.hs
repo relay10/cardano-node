@@ -13,7 +13,6 @@ import           Control.Concurrent.STM.TVar
 import           Control.Monad
 import           Control.Monad.Extra (whenJust, whenJustM)
 import qualified Data.Map.Strict as M
-import           Data.Text (Text)
 import qualified Data.Text as T
 import           Data.Time.Format (defaultTimeLocale, formatTime)
 import qualified Graphics.UI.Threepenny as UI
@@ -123,26 +122,28 @@ doAddErrorRows nodeId errorsToAdd parentEl numberOfDisplayedRows = do
 
 searchErrorMessages
   :: UI.Window
-  -> Text
+  -> Element
   -> NodeId
   -> Errors
   -> UI ()
-searchErrorMessages window textToSearch nodeId@(NodeId anId) nodesErrors =
-  liftIO (getErrorsFilteredByText textToSearch nodesErrors nodeId) >>= \case
-    [] -> do
-      -- There is nothing found. So we have to display an empty list of
-      -- errors to inform the user that there is no corresponding errors.
-      findByClassAndDo window (anId <> "-node-error-row") UI.delete
-      -- Reset number of currently displayed errors rows.
-      whenJustM (UI.getElementById window (T.unpack anId <> "__node-errors-tbody")) $ \el ->
-        void $ element el # set dataState "0"
-    foundErrors -> do
-      -- Delete displayed errors from window.
-      findByClassAndDo window (anId <> "-node-error-row") UI.delete
-      -- Do add found errors.
-      whenJustM (UI.getElementById window (T.unpack anId <> "__node-errors-tbody")) $ \el ->
-        whenJustM (readMaybe <$> get dataState el) $ \(numberOfDisplayedRows :: Int) ->
-          doAddErrorRows nodeId foundErrors el numberOfDisplayedRows
+searchErrorMessages window searchInput nodeId@(NodeId anId) nodesErrors = do
+  textToSearch <- (T.strip . T.pack) <$> get value searchInput
+  unless (T.null textToSearch) $
+    liftIO (getErrorsFilteredByText textToSearch nodesErrors nodeId) >>= \case
+      [] -> do
+        -- There is nothing found. So we have to display an empty list of
+        -- errors to inform the user that there is no corresponding errors.
+        findByClassAndDo window (anId <> "-node-error-row") UI.delete
+        -- Reset number of currently displayed errors rows.
+        whenJustM (UI.getElementById window (T.unpack anId <> "__node-errors-tbody")) $ \el ->
+          void $ element el # set dataState "0"
+      foundErrors -> do
+        -- Delete displayed errors from window.
+        findByClassAndDo window (anId <> "-node-error-row") UI.delete
+        -- Do add found errors.
+        whenJustM (UI.getElementById window (T.unpack anId <> "__node-errors-tbody")) $ \el ->
+          whenJustM (readMaybe <$> get dataState el) $ \(numberOfDisplayedRows :: Int) ->
+            doAddErrorRows nodeId foundErrors el numberOfDisplayedRows
 
 deleteAllErrorMessages
   :: UI.Window

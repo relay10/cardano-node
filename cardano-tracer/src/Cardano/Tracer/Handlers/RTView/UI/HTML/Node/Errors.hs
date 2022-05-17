@@ -6,7 +6,7 @@ module Cardano.Tracer.Handlers.RTView.UI.HTML.Node.Errors
   ) where
 
 import           Control.Monad (when)
-import           Data.Text (pack, unpack)
+import           Data.Text (unpack)
 import qualified Graphics.UI.Threepenny as UI
 import           Graphics.UI.Threepenny.Core
 
@@ -35,14 +35,12 @@ mkErrorsTable window nodeId@(NodeId anId) nodesErrors = do
   searchMessages <- UI.button #. "button is-info"
                               #+ [image "rt-view-search-errors-icon" searchSVG]
   -- If the user clicked the search button.
-  on UI.click searchMessages . const $ do
-    usersSearchText <- get value searchMessagesInput
-    searchErrorMessages window (pack usersSearchText) nodeId nodesErrors
+  on UI.click searchMessages . const $
+    searchErrorMessages window searchMessagesInput nodeId nodesErrors
   -- If the user hits Enter key.
   on UI.keyup searchMessagesInput $ \keyCode ->
-    when (keyCode == 13) $ do
-      usersSearchText <- get value searchMessagesInput
-      searchErrorMessages window (pack usersSearchText) nodeId nodesErrors
+    when (keyCode == 13) $
+      searchErrorMessages window searchMessagesInput nodeId nodesErrors
 
   errorsTable <-
     UI.div #. "modal" #+
